@@ -1,0 +1,6 @@
+{
+	"autoloads": {
+		"App": "./app"
+	},
+	"providers": ["./providers/TestAppProvider.ts"]
+}

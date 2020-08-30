@@ -1,0 +1,15 @@
+{
+	"compileOnSave": true,
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"resolveJsonModule": true
+	},
+	"extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
+	"files": [
+		"./node_modules/@adonisjs/core/build/adonis-typings/index.d.ts",
+		"./node_modules/@adonisjs/redis/build/adonis-typings/index.d.ts",
+		"./adonis-typings/index.ts"
+	]
+}
