@@ -60,6 +60,7 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 		recordTTL: number
 		currentCacheStorage: CacheStorage
 		enabledCacheStorages: CacheStorage[]
+		cacheKeyPrefix: string
 	}
 
 	const CacheManager: CacheManagerContract

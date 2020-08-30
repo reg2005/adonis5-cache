@@ -10,6 +10,7 @@ const cacheConfig: CacheConfig = {
 	recordTTL: 10000,
 	currentCacheStorage: 'test-storage',
 	enabledCacheStorages: [],
+	cacheKeyPrefix: '',
 }
 
 test.group('Adonis cache provider - test cache context API', (group) => {

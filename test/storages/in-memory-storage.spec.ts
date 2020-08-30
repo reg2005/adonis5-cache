@@ -9,6 +9,7 @@ const cacheConfig: CacheConfig = {
 	recordTTL: 1000,
 	currentCacheStorage: 'in-memory',
 	enabledCacheStorages: ['in-memory'],
+	cacheKeyPrefix: '',
 }
 
 test.group('Adonis cache provider with in memory driver', (group) => {

@@ -42,6 +42,10 @@ export default class CacheManager implements CacheManagerContract {
 		return this.cacheConfig.recordTTL || CacheManager.DEFAULT_RECORD_TTL
 	}
 
+	public get recordKeyPrefix(): string {
+		return this.cacheConfig.cacheKeyPrefix
+	}
+
 	public get context(): CacheContextContract {
 		return this.tempContextName
 			? this.cacheContexts[this.tempContextName]
@@ -101,25 +105,39 @@ export default class CacheManager implements CacheManagerContract {
 	}
 
 	public async get<T = any>(key: string): Promise<T | null> {
-		const operationResult = await this.storage.get(this.context, key)
+		const operationResult = await this.storage.get(this.context, this.buildRecordKey(key))
 		this.restoreState()
 		return operationResult
 	}
 
 	public async getMany<T = any>(keys: string[]): Promise<(T | null)[]> {
-		const operationResult = await this.storage.getMany(this.context, keys)
+		const operationResult = await this.storage.getMany(
+			this.context,
+			keys.map((key) => this.buildRecordKey(key))
+		)
 		this.restoreState()
 		return operationResult
 	}
 
 	public async put<T = any>(key: string, value: T, ttl: number = this.recordTTL) {
-		const operationResult = await this.storage.put(this.context, key, value, ttl)
+		const operationResult = await this.storage.put(
+			this.context,
+			this.buildRecordKey(key),
+			value,
+			ttl
+		)
 		this.restoreState()
 		return operationResult
 	}
 
 	public async putMany<T = any>(cacheDictionary: { [p: string]: T }, ttl: number = this.recordTTL) {
-		const operationResult = await this.storage.putMany(this.context, cacheDictionary, ttl)
+		const operationResult = await this.storage.putMany(
+			this.context,
+			Object.entries(cacheDictionary).reduce((acc, [key, value]) => {
+				return { ...acc, [this.buildRecordKey(key)]: value }
+			}, {}),
+			ttl
+		)
 		this.restoreState()
 		return operationResult
 	}
@@ -129,7 +147,11 @@ export default class CacheManager implements CacheManagerContract {
 	}
 
 	public async forget(key: string): Promise<void> {
-		await this.storage.forget(key)
+		await this.storage.forget(this.buildRecordKey(key))
+	}
+
+	private buildRecordKey(userKey: string): string {
+		return this.recordKeyPrefix + userKey
 	}
 
 	private restoreState() {

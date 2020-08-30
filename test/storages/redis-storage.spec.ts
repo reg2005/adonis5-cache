@@ -12,6 +12,7 @@ const cacheConfig: CacheConfig = {
 	recordTTL: 1000,
 	currentCacheStorage: 'redis',
 	enabledCacheStorages: ['redis'],
+	cacheKeyPrefix: '',
 }
 
 test.group('Adonis cache provider with REDIS driver', (group) => {

@@ -6,4 +6,6 @@ export default {
 	currentCacheStorage: 'redis', // storages which used as default cache storage
 
 	enabledCacheStorages: ['in-memory', 'redis'], // storages which will be loaded
+
+	cacheRecordPrefix: 'cache_record_'
 } as CacheConfig
