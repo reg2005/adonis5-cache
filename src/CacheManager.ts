@@ -124,6 +124,14 @@ export default class CacheManager implements CacheManagerContract {
 		return operationResult
 	}
 
+	public async flush(): Promise<void> {
+		await this.storage.flush()
+	}
+
+	public async forget(key: string): Promise<void> {
+		await this.storage.forget(key)
+	}
+
 	private restoreState() {
 		this.tempStorageName = null
 		this.tempContextName = null

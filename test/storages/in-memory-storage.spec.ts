@@ -190,4 +190,30 @@ test.group('Adonis cache provider with in memory driver', (group) => {
 		const readedValue = await cacheManager.getMany(Object.keys(testMap))
 		expect(readedValue).to.be.eql(Object.values(testMap))
 	}).timeout(0)
+
+	test('FORGET operation - should remove cached value', async () => {
+		const testKey = 'test'
+		const testValue = 'testValue'
+
+		await cacheManager.put(testKey, testValue)
+
+		await cacheManager.forget(testKey)
+
+		const readedValue = await cacheManager.get(testKey)
+		expect(readedValue).to.be.null
+	}).timeout(0)
+
+	test('FLUSH operation - should clean cache storage', async () => {
+		const testKey1 = 'test-key-1'
+		const testKey2 = 'test-key-'
+		const testValue = 'testValue'
+
+		await cacheManager.put(testKey1, testValue)
+		await cacheManager.put(testKey2, testValue)
+
+		await cacheManager.flush()
+
+		expect(await cacheManager.get(testKey1)).to.be.null
+		expect(await cacheManager.get(testKey2)).to.be.null
+	}).timeout(0)
 })

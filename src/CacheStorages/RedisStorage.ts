@@ -34,4 +34,12 @@ export default class RedisStorage implements CacheStorageContract {
 			Object.entries(cacheDictionary).map(([key, value]) => this.put<T>(context, key, value, ttl))
 		)
 	}
+
+	public async flush(): Promise<void> {
+		await this.redisConnection.flushdb()
+	}
+
+	public async forget(key: string): Promise<void> {
+		await this.redisConnection.del(key)
+	}
 }

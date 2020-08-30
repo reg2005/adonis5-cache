@@ -164,4 +164,27 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 
 		verify(mockedStorage.getMany(anything(), testKeys)).once()
 	}).timeout(0)
+
+	test('should call forget operation on storage', async () => {
+		const testKey = 'testKey'
+		const storageName = 'test-storage'
+
+		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
+
+		await cacheManager.forget(testKey)
+
+		verify(mockedStorage.forget(testKey)).once()
+	}).timeout(0)
+
+	test('should call flush operation on storage', async () => {
+		const storageName = 'test-storage'
+
+		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
+
+		await cacheManager.flush()
+
+		verify(mockedStorage.flush()).once()
+	}).timeout(0)
 })

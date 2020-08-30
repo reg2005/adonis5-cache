@@ -20,6 +20,10 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 			cacheDictionary: { [key: string]: T },
 			ttl: number
 		): Promise<void>
+
+		flush(): Promise<void>
+
+		forget(key: string): Promise<void>
 	}
 
 	export interface CacheManagerContract {
@@ -41,9 +45,13 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 
 		getMany<T = any>(keys: string[]): Promise<(T | null)[]>
 
-		put<T = any>(key: string, value: T, ttl?: number): void
+		put<T = any>(key: string, value: T, ttl?: number): Promise<void>
 
-		putMany<T = any>(cacheDictionary: { [key: string]: T }, ttl?: number): void
+		putMany<T = any>(cacheDictionary: { [key: string]: T }, ttl?: number): Promise<void>
+
+		flush(): Promise<void>
+
+		forget(key: string): Promise<void>
 	}
 
 	type CacheStorage = 'redis' | 'in-memory' | string

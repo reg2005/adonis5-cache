@@ -49,4 +49,12 @@ export default class InMemoryStorage implements CacheStorageContract {
 			Object.entries(cacheDictionary).map(([key, value]) => this.put<T>(context, key, value, ttl))
 		)
 	}
+
+	public async flush(): Promise<void> {
+		this.cacheStorage = {}
+	}
+
+	public async forget(key: string): Promise<void> {
+		delete this.cacheStorage[key]
+	}
 }
