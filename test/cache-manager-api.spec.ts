@@ -4,7 +4,7 @@ import AdonisCacheProvider from '../providers/AdonisCacheProvider'
 import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
 
 import InMemoryStorage from '../src/CacheStorages/InMemoryStorage'
-import { anything, instance, mock, objectContaining, verify } from 'ts-mockito'
+import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito'
 import Config from '@ioc:Adonis/Core/Config'
 
 const cacheConfig: CacheConfig = {
@@ -12,6 +12,12 @@ const cacheConfig: CacheConfig = {
 	currentCacheStorage: 'test-storage',
 	enabledCacheStorages: [],
 	cacheKeyPrefix: '',
+	enabledEvents: {
+		'cache-record:read': false,
+		'cache-record:written': false,
+		'cache-record:missed': false,
+		'cache-record:forgotten': false,
+	},
 }
 
 test.group('Adonis cache provider - test cache manager API', (group) => {
@@ -164,6 +170,10 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
 
+		when(mockedStorage.getMany(anything(), objectContaining(testKeys))).thenReturn(
+			Promise.resolve(testKeys)
+		)
+
 		await cacheManager.getMany(testKeys)
 
 		verify(mockedStorage.getMany(anything(), objectContaining(testKeys))).once()
@@ -264,6 +274,9 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		config.set('cache.cacheKeyPrefix', cacheKeyPrefix)
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.getMany(anything(), objectContaining(expectedKeysWithPrefixes))).thenReturn(
+			Promise.resolve(testKeys)
+		)
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
 
 		await cacheManager.getMany(testKeys)

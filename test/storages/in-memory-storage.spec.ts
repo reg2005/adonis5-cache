@@ -10,6 +10,12 @@ const cacheConfig: CacheConfig = {
 	currentCacheStorage: 'in-memory',
 	enabledCacheStorages: ['in-memory'],
 	cacheKeyPrefix: '',
+	enabledEvents: {
+		'cache-record:read': false,
+		'cache-record:written': false,
+		'cache-record:missed': false,
+		'cache-record:forgotten': false,
+	},
 }
 
 test.group('Adonis cache provider with in memory driver', (group) => {
@@ -198,10 +204,19 @@ test.group('Adonis cache provider with in memory driver', (group) => {
 
 		await cacheManager.put(testKey, testValue)
 
-		await cacheManager.forget(testKey)
+		const result = await cacheManager.forget(testKey)
+		expect(result).to.be.true
 
 		const readedValue = await cacheManager.get(testKey)
 		expect(readedValue).to.be.null
+	}).timeout(0)
+
+	test("FORGET operation - should return false as operation result, record doesn't exist", async () => {
+		const testKey = 'test'
+
+		const result = await cacheManager.forget(testKey)
+
+		expect(result).to.be.false
 	}).timeout(0)
 
 	test('FLUSH operation - should clean cache storage', async () => {

@@ -13,6 +13,12 @@ const cacheConfig: CacheConfig = {
 	currentCacheStorage: 'redis',
 	enabledCacheStorages: ['redis'],
 	cacheKeyPrefix: '',
+	enabledEvents: {
+		'cache-record:read': false,
+		'cache-record:written': false,
+		'cache-record:missed': false,
+		'cache-record:forgotten': false,
+	},
 }
 
 test.group('Adonis cache provider with REDIS driver', (group) => {
@@ -203,10 +209,19 @@ test.group('Adonis cache provider with REDIS driver', (group) => {
 
 		await cacheManager.put(testKey, testValue)
 
-		await cacheManager.forget(testKey)
+		const result = await cacheManager.forget(testKey)
+		expect(result).to.be.true
 
-		const readedValue = await redis.get(testKey)
+		const readedValue = await cacheManager.get(testKey)
 		expect(readedValue).to.be.null
+	}).timeout(0)
+
+	test("FORGET operation - should return false as operation result, record doesn't exist", async () => {
+		const testKey = 'testKey'
+
+		const result = await cacheManager.forget(testKey)
+
+		expect(result).to.be.false
 	}).timeout(0)
 
 	test('FLUSH operation - should clean cache storage', async () => {

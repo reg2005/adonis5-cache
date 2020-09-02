@@ -72,6 +72,7 @@
     "npm-audit-html": "^1.4.1",
     "pino-pretty": "^4.1.0",
     "prettier": "^2.0.5",
+    "ramda": "^0.27.1",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.19",
     "supertest": "^4.0.2",
@@ -128,6 +129,7 @@
     "anyBranch": false
   },
   "dependencies": {
+    "@adonisjs/events": "^4.0.1",
     "@adonisjs/redis": "^4.1.2",
     "dayjs": "^1.8.34"
   }

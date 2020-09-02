@@ -9,11 +9,14 @@ import {
 	CacheStorageContract,
 } from '@ioc:Adonis/Addons/Adonis5-Cache'
 import InMemoryStorage from './CacheStorages/InMemoryStorage'
+import CacheEventEmitter from './CacheEventEmitter'
+import zipObject from './Utils/zipObject'
 
 export enum RegisteredCacheStorages {
 	REDIS = 'redis',
 	IN_MEMORY = 'in-memory',
 }
+
 export type CacheStorageCollection = { [key: string]: CacheStorageContract }
 export type CacheContextCollection = { [key: string]: CacheContextContract }
 
@@ -29,9 +32,14 @@ export default class CacheManager implements CacheManagerContract {
 
 	protected tempContextName: string | null = null
 	protected tempStorageName: string | null = null
+	protected eventEmitter: CacheEventEmitter
 
 	constructor(iocContainer: IocContract) {
 		this.cacheConfig = iocContainer.use('Adonis/Core/Config').get('cache')
+		this.eventEmitter = new CacheEventEmitter(
+			this.cacheConfig.enabledEvents,
+			iocContainer.use('Adonis/Core/Event')
+		)
 		this.currentCacheStorageName = this.cacheConfig.currentCacheStorage
 
 		this.initCacheStorages(iocContainer)
@@ -105,18 +113,20 @@ export default class CacheManager implements CacheManagerContract {
 	}
 
 	public async get<T = any>(key: string): Promise<T | null> {
-		const operationResult = await this.storage.get(this.context, this.buildRecordKey(key))
+		const cacheValue = await this.storage.get<T>(this.context, this.buildRecordKey(key))
+		this.emitEventsOnReadOperations({ [key]: cacheValue })
 		this.restoreState()
-		return operationResult
+		return cacheValue
 	}
 
 	public async getMany<T = any>(keys: string[]): Promise<(T | null)[]> {
-		const operationResult = await this.storage.getMany(
+		const cachedValues = await this.storage.getMany<T>(
 			this.context,
 			keys.map((key) => this.buildRecordKey(key))
 		)
+		this.emitEventsOnReadOperations(zipObject(keys, cachedValues))
 		this.restoreState()
-		return operationResult
+		return cachedValues
 	}
 
 	public async put<T = any>(key: string, value: T, ttl: number = this.recordTTL) {
@@ -126,6 +136,7 @@ export default class CacheManager implements CacheManagerContract {
 			value,
 			ttl
 		)
+		this.eventEmitter.emitEvent('cache-record:written', { [key]: value })
 		this.restoreState()
 		return operationResult
 	}
@@ -138,6 +149,7 @@ export default class CacheManager implements CacheManagerContract {
 			}, {}),
 			ttl
 		)
+		this.eventEmitter.emitEvent('cache-record:written', cacheDictionary)
 		this.restoreState()
 		return operationResult
 	}
@@ -146,8 +158,10 @@ export default class CacheManager implements CacheManagerContract {
 		await this.storage.flush()
 	}
 
-	public async forget(key: string): Promise<void> {
-		await this.storage.forget(this.buildRecordKey(key))
+	public async forget(key: string): Promise<boolean> {
+		const result = await this.storage.forget(this.buildRecordKey(key))
+		this.eventEmitter.emitEvent('cache-record:forgotten', { [key]: result })
+		return result
 	}
 
 	private buildRecordKey(userKey: string): string {
@@ -167,6 +181,21 @@ export default class CacheManager implements CacheManagerContract {
 
 		if (this.cacheConfig.enabledCacheStorages.includes(RegisteredCacheStorages.IN_MEMORY)) {
 			this.registerStorage(RegisteredCacheStorages.IN_MEMORY, new InMemoryStorage())
+		}
+	}
+
+	private emitEventsOnReadOperations<T = null>(cacheData: { [key: string]: T }) {
+		const missedKeys: string[] = []
+		const storedData = {}
+		for (const [key, value] of Object.entries(cacheData)) {
+			value === null ? missedKeys.push(key) : Object.assign(storedData, { [key]: value })
+		}
+		if (missedKeys.length > 0) {
+			this.eventEmitter.emitEvent('cache-record:missed', { keys: missedKeys })
+		}
+
+		if (Object.keys(storedData).length > 0) {
+			this.eventEmitter.emitEvent('cache-record:read', storedData)
 		}
 	}
 
