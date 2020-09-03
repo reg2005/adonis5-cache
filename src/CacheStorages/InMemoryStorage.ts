@@ -54,7 +54,10 @@ export default class InMemoryStorage implements CacheStorageContract {
 		this.cacheStorage = {}
 	}
 
-	public async forget(key: string): Promise<void> {
+	public async forget(key: string): Promise<boolean> {
+		const isExists = key in this.cacheStorage
 		delete this.cacheStorage[key]
+
+		return isExists
 	}
 }

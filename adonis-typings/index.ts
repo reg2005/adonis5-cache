@@ -1,4 +1,6 @@
 declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
+	import EventList from '@ioc:Adonis/Core/Event'
+
 	type CacheSerializer = <T = any>(value: T) => string
 	type CacheDeserializer = <T = any>(value: string) => T
 
@@ -23,7 +25,7 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 
 		flush(): Promise<void>
 
-		forget(key: string): Promise<void>
+		forget(key: string): Promise<boolean>
 	}
 
 	export interface CacheManagerContract {
@@ -51,16 +53,42 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 
 		flush(): Promise<void>
 
-		forget(key: string): Promise<void>
+		forget(key: string): Promise<boolean>
 	}
 
-	type CacheStorage = 'redis' | 'in-memory' | string
+	export type CacheStorage = 'redis' | 'in-memory' | string
+
+	export type CacheKeysEventPayload = { keys: string[] }
+	export type CacheDataEventPayload = { [key: string]: unknown }
+	export type CacheForgottenEventPayload = { [key: string]: boolean }
+	export type EventPayload =
+		| CacheDataEventPayload
+		| CacheKeysEventPayload
+		| CacheForgottenEventPayload
+
+	export type CacheEvents = {
+		'cache-record:read': CacheDataEventPayload
+
+		'cache-record:written': CacheDataEventPayload
+
+		'cache-record:missed': CacheKeysEventPayload
+
+		'cache-record:forgotten': CacheForgottenEventPayload
+	}
+
+	export type CacheEventsConfig = Record<keyof CacheEvents, boolean>
 
 	export interface CacheConfig {
 		recordTTL: number
 		currentCacheStorage: CacheStorage
 		enabledCacheStorages: CacheStorage[]
 		cacheKeyPrefix: string
+
+		enabledEvents: CacheEventsConfig
+	}
+
+	interface EventList {
+		(...CacheEvents)
 	}
 
 	const CacheManager: CacheManagerContract

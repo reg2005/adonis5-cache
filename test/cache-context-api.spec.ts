@@ -11,6 +11,12 @@ const cacheConfig: CacheConfig = {
 	currentCacheStorage: 'test-storage',
 	enabledCacheStorages: [],
 	cacheKeyPrefix: '',
+	enabledEvents: {
+		'cache-record:read': false,
+		'cache-record:written': false,
+		'cache-record:missed': false,
+		'cache-record:forgotten': false,
+	},
 }
 
 test.group('Adonis cache provider - test cache context API', (group) => {

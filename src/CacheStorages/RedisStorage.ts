@@ -39,7 +39,8 @@ export default class RedisStorage implements CacheStorageContract {
 		await this.redisConnection.flushdb()
 	}
 
-	public async forget(key: string): Promise<void> {
-		await this.redisConnection.del(key)
+	public async forget(key: string): Promise<boolean> {
+		const result = await this.redisConnection.del(key)
+		return Boolean(result)
 	}
 }
