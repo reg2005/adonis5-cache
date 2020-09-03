@@ -18,6 +18,7 @@ Supported cache storages:
 - [Sample Usage](#sample-usage)
 - [Custom storages](#custom-storages)
 - [Custom context](#custom-context)
+- [Cache events](#cache-events)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -29,7 +30,7 @@ Compile your code:
 ```bash
 node ace serve --watch
 ```
-Connect all dependences:
+Install provider:
 ```bash
 node ace invoke adonis5-cache
 ```
@@ -50,7 +51,7 @@ After adding cache provider to your app, you can import CacheManager for accessi
     constructor () {
     }
   
-    public async loadDataFromExtarnalApi (userCode) {
+    public async loadDataFromExternalApi (userCode) {
       let userData = await Cache.get<UserDTO>(userCode)
       if (!userData) {
         userData = //load data from extarnal api
@@ -133,6 +134,39 @@ Of course, you can enable your custom context as default cache context:
 ```js
 
 Cache.enableContext('custom-context-name') // After this your cache operations will be use your custom context
+```
+
+
+# Cache events 
+
+Cache provider implements several events:
+- cache-record:read
+- cache-record:written
+- cache-record:missed
+- cache-record:forgotten
+
+You can add listener for this events in the following ways:
+```js
+import Event from '@ioc:Adonis/Core/Event'
+
+Event.on('cache-record:missed', 'CacheEventListener.handleCacheRecordMissedEvent')
+```
+
+You can configure which events are emitted with cache config:
+
+```js
+{
+	recordTTL: 10000,
+	currentCacheStorage: 'redis',
+	enabledCacheStorages: ['redis'],
+	cacheKeyPrefix: '',
+	enabledEvents: {
+		'cache-record:read': false,
+		'cache-record:written': false,
+		'cache-record:missed': false,
+		'cache-record:forgotten': false,
+	}
+}
 ```
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
 [typescript-url]:  "typescript"

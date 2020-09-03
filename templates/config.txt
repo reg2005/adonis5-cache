@@ -7,5 +7,12 @@ export default {
 
 	enabledCacheStorages: ['in-memory', 'redis'], // storages which will be loaded
 
-	cacheRecordPrefix: 'cache_record_'
+	cacheKeyPrefix: 'cache_record_', // prefix for keys, which will be stored in cache storage
+
+	enabledEvents: {
+		'cache-record:read': false,
+		'cache-record:written': false,
+		'cache-record:missed': false,
+		'cache-record:forgotten': false,
+	},
 } as CacheConfig
