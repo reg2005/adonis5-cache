@@ -21,7 +21,6 @@ tsnode.register({
 })
 
 const { files = ['test/**/*.spec.ts'], grep } = argv
-
 configure({
 	files: Array.isArray(files) ? files : [files],
 	grep: grep,

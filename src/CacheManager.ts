@@ -10,7 +10,8 @@ import {
 } from '@ioc:Adonis/Addons/Adonis5-Cache'
 import InMemoryStorage from './CacheStorages/InMemoryStorage'
 import CacheEventEmitter from './CacheEventEmitter'
-import zipObject from './Utils/zipObject'
+import { zipObj } from 'ramda'
+import TaggableCacheManager from './TaggableCacheManager'
 
 export enum RegisteredCacheStorages {
 	REDIS = 'redis',
@@ -33,6 +34,7 @@ export default class CacheManager implements CacheManagerContract {
 	protected tempContextName: string | null = null
 	protected tempStorageName: string | null = null
 	protected eventEmitter: CacheEventEmitter
+	protected cacheTags: string[] = []
 
 	constructor(iocContainer: IocContract) {
 		this.cacheConfig = iocContainer.use('Adonis/Core/Config').get('cache')
@@ -94,6 +96,10 @@ export default class CacheManager implements CacheManagerContract {
 		return this
 	}
 
+	public tags(...tags: string[]): TaggableCacheManager {
+		return new TaggableCacheManager(this, tags)
+	}
+
 	public enableStorage(storageName: string): CacheManagerContract {
 		if (!this.cacheStorages.hasOwnProperty(storageName)) {
 			throw new Error('Unregistered storage for Adonis-Cache')
@@ -124,7 +130,7 @@ export default class CacheManager implements CacheManagerContract {
 			this.context,
 			keys.map((key) => this.buildRecordKey(key))
 		)
-		this.emitEventsOnReadOperations(zipObject(keys, cachedValues))
+		this.emitEventsOnReadOperations(zipObj(keys, cachedValues))
 		this.restoreState()
 		return cachedValues
 	}
@@ -171,6 +177,7 @@ export default class CacheManager implements CacheManagerContract {
 	private restoreState() {
 		this.tempStorageName = null
 		this.tempContextName = null
+		this.cacheTags = []
 	}
 
 	private initCacheStorages(iocContainer: IocContract) {

@@ -1,17 +1,31 @@
-import { CacheContextContract, CacheStorageContract } from '@ioc:Adonis/Addons/Adonis5-Cache'
+import {
+	CacheContextContract,
+	CacheStorageContract,
+	TaggableStorageContract,
+} from '@ioc:Adonis/Addons/Adonis5-Cache'
 import dayjs from 'dayjs'
+import { append } from 'ramda'
 
 interface InMemoryRecord {
 	recordExpirationTime: string
 	recordValue: string
 }
 
-type InMemoryCollection = { [key: string]: InMemoryRecord }
+type InMemoryCacheCollection = {
+	cacheRecords: { [key: string]: InMemoryRecord }
+	tags: { [key: string]: string[] }
+}
 
-export default class InMemoryStorage implements CacheStorageContract {
-	protected cacheStorage: InMemoryCollection = {}
+export default class InMemoryStorage implements CacheStorageContract, TaggableStorageContract {
+	protected cacheStorage: InMemoryCacheCollection
 
-	constructor() {}
+	constructor() {
+		this.cacheStorage = this.initCacheStorage
+	}
+
+	private get initCacheStorage(): InMemoryCacheCollection {
+		return { cacheRecords: {}, tags: {} }
+	}
 
 	public async get<T = any>(context: CacheContextContract, key: string): Promise<T | null> {
 		const { recordExpirationTime, recordValue = null } = this.cacheStorage[key] || {}
@@ -51,7 +65,7 @@ export default class InMemoryStorage implements CacheStorageContract {
 	}
 
 	public async flush(): Promise<void> {
-		this.cacheStorage = {}
+		this.cacheStorage = this.initCacheStorage
 	}
 
 	public async forget(key: string): Promise<boolean> {
@@ -59,5 +73,17 @@ export default class InMemoryStorage implements CacheStorageContract {
 		delete this.cacheStorage[key]
 
 		return isExists
+	}
+
+	public async addTag(tag: string, tagData: string): Promise<void> {
+		this.cacheStorage.tags[tag] = append(tagData, this.cacheStorage.tags[tag])
+	}
+
+	public async readTag(tag: string): Promise<string[]> {
+		return this.cacheStorage.tags[tag] || []
+	}
+
+	public async removeTag(tag: string) {
+		delete this.cacheStorage.tags[tag]
 	}
 }

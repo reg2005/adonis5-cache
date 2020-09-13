@@ -1,7 +1,11 @@
 import Redis from '@ioc:Adonis/Addons/Redis'
-import { CacheContextContract, CacheStorageContract } from '@ioc:Adonis/Addons/Adonis5-Cache'
+import {
+	CacheContextContract,
+	CacheStorageContract,
+	TaggableStorageContract,
+} from '@ioc:Adonis/Addons/Adonis5-Cache'
 
-export default class RedisStorage implements CacheStorageContract {
+export default class RedisStorage implements CacheStorageContract, TaggableStorageContract {
 	constructor(protected redisConnection: typeof Redis) {}
 
 	public async get<T = any>(context: CacheContextContract, key: string): Promise<T | null> {
@@ -42,5 +46,17 @@ export default class RedisStorage implements CacheStorageContract {
 	public async forget(key: string): Promise<boolean> {
 		const result = await this.redisConnection.del(key)
 		return Boolean(result)
+	}
+
+	public async addTag(tag: string, tagData: string): Promise<void> {
+		await this.redisConnection.sadd(tag, tagData)
+	}
+
+	public async readTag(tag: string): Promise<string[]> {
+		return this.redisConnection.smembers(tag)
+	}
+
+	public async removeTag(tag: string): Promise<void> {
+		await this.redisConnection.del(tag)
 	}
 }

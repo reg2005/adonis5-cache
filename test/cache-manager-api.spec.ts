@@ -1,11 +1,17 @@
 import test from 'japa'
 import { AdonisApplication } from '../test-helpers/TestAdonisApp'
 import AdonisCacheProvider from '../providers/AdonisCacheProvider'
-import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
+import {
+	CacheManagerContract,
+	CacheConfig,
+	TaggableCacheManagerContract,
+} from '@ioc:Adonis/Addons/Adonis5-Cache'
 
 import InMemoryStorage from '../src/CacheStorages/InMemoryStorage'
 import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito'
+import { expect } from 'chai'
 import Config from '@ioc:Adonis/Core/Config'
+import TaggableCacheManager from '../src/TaggableCacheManager'
 
 const cacheConfig: CacheConfig = {
 	recordTTL: 1000,
@@ -299,5 +305,14 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		await cacheManager.forget(testKey)
 
 		verify(mockedStorage.forget(cacheKeyPrefix + testKey)).once()
+	}).timeout(0)
+
+	test('should return taggable cache manager for using taggable cache', async () => {
+		const tags = ['testKey', 'testKey2']
+
+		const taggableCacheManager: TaggableCacheManagerContract = await cacheManager.tags(...tags)
+
+		expect(taggableCacheManager).instanceOf(TaggableCacheManager)
+		expect(taggableCacheManager.tags).to.eql(tags)
 	}).timeout(0)
 })
