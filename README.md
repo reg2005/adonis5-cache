@@ -168,6 +168,31 @@ You can configure which events are emitted with cache config:
 	}
 }
 ```
+
+#Cache tags
+
+When you need partial flushing your cache you can use cache tags. This features allow you tag your cache records and then
+flush only tagged records. For using cache tags you should call method __tags__ on cache manager with list of your tags as argument, then you get TaggedCacheManager, which allow you using tagged cache functionality. 
+```js
+Cache.tags('tag-1', 'tag-2', 'tag-3')
+```
+Actually for writing cache record with tags you can in the following way:
+```js
+await Cache.tags('tag-1', 'tag-2', 'tag-3').put('key', 'value')
+```
+Or store dictionary with cache records:
+Actually for writing cache record with tags you can in the following way:
+```js
+await Cache.tags('tag-1', 'tag-2', 'tag-3').putMany({ key: 'value' })
+```
+
+Then you can clear tagged records in the following way:
+```js
+await Cache.tags('tag-1', 'tag-2', 'tag-3').flush()
+```
+During this operation tags and tagger records will be removed from storage, however records with another tags will remain in your storage. This is  great feature for storing responses from different API's. You can tag each response by appropriate tag
+and flush responses only for desirable API.
+
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
 [typescript-url]:  "typescript"
 
