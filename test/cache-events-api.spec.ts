@@ -44,10 +44,10 @@ test.group('Adonis cache provider - test for event emitting', (group) => {
 
 		await cacheManager.get(testKey)
 
-		const { eventType, payload } = last(trappedEvents)
+		const result = last(trappedEvents)
 
-		expect(eventType).to.equal('cache-record:missed')
-		expect(payload).to.eql({ keys: [testKey] })
+		expect(result?.eventType).to.equal('cache-record:missed')
+		expect(result?.payload).to.eql({ keys: [testKey] })
 	}).timeout(0)
 
 	test('should emit event on read cache record', async () => {
@@ -57,10 +57,10 @@ test.group('Adonis cache provider - test for event emitting', (group) => {
 
 		await cacheManager.get(testKey)
 
-		const { eventType, payload } = last(trappedEvents)
+		const result = last(trappedEvents)
 
-		expect(eventType).to.equal('cache-record:read')
-		expect(payload).to.eql({ [testKey]: testValue })
+		expect(result?.eventType).to.equal('cache-record:read')
+		expect(result?.payload).to.eql({ [testKey]: testValue })
 	}).timeout(0)
 
 	test('should emit event on write value to cache', async () => {
@@ -69,10 +69,10 @@ test.group('Adonis cache provider - test for event emitting', (group) => {
 
 		await cacheManager.put(testKey, testValue)
 
-		const { eventType, payload } = last(trappedEvents)
+		const result = last(trappedEvents)
 
-		expect(eventType).to.equal('cache-record:written')
-		expect(payload).to.eql({ [testKey]: testValue })
+		expect(result?.eventType).to.equal('cache-record:written')
+		expect(result?.payload).to.eql({ [testKey]: testValue })
 	}).timeout(0)
 
 	test('should emit event on write multiple values to cache', async () => {
@@ -80,10 +80,10 @@ test.group('Adonis cache provider - test for event emitting', (group) => {
 
 		await cacheManager.putMany(cacheDict)
 
-		const { eventType, payload } = last(trappedEvents)
+		const result = last(trappedEvents)
 
-		expect(eventType).to.equal('cache-record:written')
-		expect(payload).to.eql(cacheDict)
+		expect(result?.eventType).to.equal('cache-record:written')
+		expect(result?.payload).to.eql(cacheDict)
 	}).timeout(0)
 
 	test('should emit events on missing keys and read values after multi reading operation', async () => {
@@ -111,8 +111,8 @@ test.group('Adonis cache provider - test for event emitting', (group) => {
 
 		const recordForgottenEvent = last(trappedEvents)
 
-		expect(recordForgottenEvent.eventType).to.equal('cache-record:forgotten')
-		expect(recordForgottenEvent.payload).to.eql({ [testKey]: false })
+		expect(recordForgottenEvent?.eventType).to.equal('cache-record:forgotten')
+		expect(recordForgottenEvent?.payload).to.eql({ [testKey]: false })
 	}).timeout(0)
 
 	test('should emit events on record forgotten, record exists', async () => {
@@ -124,7 +124,7 @@ test.group('Adonis cache provider - test for event emitting', (group) => {
 
 		const recordForgottenEvent = last(trappedEvents)
 
-		expect(recordForgottenEvent.eventType).to.equal('cache-record:forgotten')
-		expect(recordForgottenEvent.payload).to.eql({ [testKey]: true })
+		expect(recordForgottenEvent?.eventType).to.equal('cache-record:forgotten')
+		expect(recordForgottenEvent?.payload).to.eql({ [testKey]: true })
 	}).timeout(0)
 })
