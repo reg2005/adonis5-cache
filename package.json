@@ -1,7 +1,7 @@
 {
   "name": "adonis5-cache",
-  "version": "1.0.0",
-  "description": "cache provider for AdonisJS 5",
+  "version": "1.0.1",
+  "description": "Cache provider for AdonisJS 5",
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "dev": "tsc --watch",
@@ -33,6 +33,10 @@
     {
       "name": "Vladyslav Parashchenko",
       "email": "vladyslavparashchenko37@gmail.com"
+    },
+    {
+      "name": "Ryumin Evgeniy",
+      "email": "cmp08@ya.ru"
     }
   ],
   "license": "MIT",
@@ -51,6 +55,7 @@
     "@adonisjs/mrm-preset": "^2.4.0",
     "@poppinss/dev-utils": "^1.0.7",
     "@types/node": "^14.0.24",
+    "@types/ramda": "^0.27.19",
     "chai": "^4.2.0",
     "commitizen": "^4.1.2",
     "cpx": "^1.5.0",
@@ -72,7 +77,6 @@
     "npm-audit-html": "^1.4.1",
     "pino-pretty": "^4.1.0",
     "prettier": "^2.0.5",
-    "ramda": "^0.27.1",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.19",
     "supertest": "^4.0.2",
@@ -131,6 +135,7 @@
   "dependencies": {
     "@adonisjs/events": "^4.0.1",
     "@adonisjs/redis": "^4.1.2",
-    "dayjs": "^1.8.34"
+    "dayjs": "^1.8.34",
+    "ramda": "^0.27.1"
   }
 }
