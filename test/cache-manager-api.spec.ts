@@ -53,6 +53,38 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		verify(mockedStorage.get(anything(), testKey)).once()
 	}).timeout(0)
 
+	test("should return fallback value, if cached value doesn't exists", async () => {
+		const testKey = 'testKey'
+		const fallbackValue = 'fallback-value'
+		const storageName = 'mocked-in-memory-store'
+
+		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+
+		cacheManager.registerStorage(storageName, instance(mockedStorage))
+		cacheManager.enableStorage(storageName)
+
+		const receivedValue = await cacheManager.get(testKey, fallbackValue)
+
+		expect(receivedValue).to.equal(fallbackValue)
+	}).timeout(0)
+
+	test("should return results of fallback func, if cached value doesn't exists", async () => {
+		const testKey = 'testKey'
+		const fallbackValue = 'fallback-value'
+		const storageName = 'mocked-in-memory-store'
+
+		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+
+		cacheManager.registerStorage(storageName, instance(mockedStorage))
+		cacheManager.enableStorage(storageName)
+
+		const receivedValue = await cacheManager.get(testKey, () => fallbackValue)
+
+		expect(receivedValue).to.equal(fallbackValue)
+	}).timeout(0)
+
 	test('should get value from selected cache storage', async () => {
 		const testKey = 'testKey'
 		const storageName = 'mocked-in-memory-store'

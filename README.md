@@ -17,7 +17,10 @@ Supported cache storages:
 - [Installation](#installation)
 - [Sample Usage](#sample-usage)
 - [Custom storages](#custom-storages)
+      - [Storage toggle](#storage-toggle)
 - [Custom context](#custom-context)
+      - [Enable custom context as default](#enable-custom-context-as-default)
+      - [Cache fallback](#cache-fallback)
 - [Cache events](#cache-events)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -54,7 +57,7 @@ After adding cache provider to your app, you can import CacheManager for accessi
     public async loadDataFromExternalApi (userCode) {
       let userData = await Cache.get<UserDTO>(userCode)
       if (!userData) {
-        userData = //load data from extarnal api
+        userData = //load data from external api
         await Cache.put(userData)
       }    
  
@@ -93,6 +96,8 @@ import Cache from '@ioc:Adonis/Addons/Adonis5-Cache'
 
 Cache.registerStorage('storage-name', storageInstance)
 ```
+
+#### Storage toggle
 After registration you can use your storage in such way:
 ```js
 const cachedValue = await Cache.viaStorage('storage-name').get('cache-key')
@@ -128,14 +133,29 @@ And then you can using new context when you accessing to cache storage:
 const cachedValue = await Cache.get<RecordDTO>('cache-key') // Reading data from cache using custom context
 
 await Cache.put('cache-key', cachedData) // Storing data to cache using custom context
-
 ```
+
+#### Enable custom context as default
+
 Of course, you can enable your custom context as default cache context:
 ```js
 
 Cache.enableContext('custom-context-name') // After this your cache operations will be use your custom context
 ```
 
+#### Cache fallback
+You can pass fallback value when you calling get method:
+```js
+const cachedValue = await Cache.get<RecordDTO>('cache-key', fallbackValue)
+
+```
+
+Or pass async function as fallback value in the following way
+```js
+const cachedValue = await Cache.get<RecordDTO>('cache-key', async () => { 
+  return callApi(); 
+})
+```
 
 # Cache events 
 

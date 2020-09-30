@@ -42,8 +42,11 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 		removeTag(tag: string): Promise<void>
 	}
 
+	export type AsyncFunction<T = any> = () => Promise<T>
+
 	export interface BaseCacheManagerContract {
 		get<T = any>(key: string): Promise<T | null>
+		get<T = any>(key: string, fallback: T | AsyncFunction<T>): Promise<T | null>
 
 		getMany<T = any>(keys: string[]): Promise<(T | null)[]>
 

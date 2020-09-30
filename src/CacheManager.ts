@@ -7,11 +7,13 @@ import {
 	CacheContextContract,
 	CacheManagerContract,
 	CacheStorageContract,
+	AsyncFunction,
 } from '@ioc:Adonis/Addons/Adonis5-Cache'
 import InMemoryStorage from './CacheStorages/InMemoryStorage'
 import CacheEventEmitter from './CacheEventEmitter'
-import { zipObj } from 'ramda'
+import { zipObj, isNil } from 'ramda'
 import TaggableCacheManager from './TaggableCacheManager'
+import { isAsyncFunction } from './TypeGuards'
 
 export enum RegisteredCacheStorages {
 	REDIS = 'redis',
@@ -118,11 +120,12 @@ export default class CacheManager implements CacheManagerContract {
 		return this
 	}
 
-	public async get<T = any>(key: string): Promise<T | null> {
+	public async get<T = any>(key: string, fallback?: T | AsyncFunction<T>): Promise<T | null> {
 		const cacheValue = await this.storage.get<T>(this.context, this.buildRecordKey(key))
 		this.emitEventsOnReadOperations({ [key]: cacheValue })
 		this.restoreState()
-		return cacheValue
+
+		return this.resolveFallback(cacheValue, fallback || null)
 	}
 
 	public async getMany<T = any>(keys: string[]): Promise<(T | null)[]> {
@@ -209,5 +212,17 @@ export default class CacheManager implements CacheManagerContract {
 	private initCacheContexts() {
 		this.currentCacheContextName = 'DEFAULT'
 		this.cacheContexts = { [this.currentCacheContextName]: DefaultCacheContext }
+	}
+
+	private resolveFallback<T = any>(value: T | null, fallback: T | AsyncFunction<T>): Promise<T> {
+		if (!isNil(value)) {
+			return Promise.resolve(value)
+		}
+
+		if (isAsyncFunction(fallback)) {
+			return fallback()
+		}
+
+		return Promise.resolve(fallback)
 	}
 }
