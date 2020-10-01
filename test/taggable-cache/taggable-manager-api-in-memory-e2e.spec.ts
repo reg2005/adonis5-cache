@@ -20,6 +20,7 @@ const cacheConfig: CacheConfig = {
 	currentCacheStorage: 'in-memory',
 	enabledCacheStorages: ['in-memory'],
 	cacheKeyPrefix: '',
+	ttlUnits: 'ms',
 	enabledEvents: {
 		'cache-record:read': false,
 		'cache-record:written': false,

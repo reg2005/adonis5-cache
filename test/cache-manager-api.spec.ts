@@ -18,6 +18,7 @@ const cacheConfig: CacheConfig = {
 	currentCacheStorage: 'test-storage',
 	enabledCacheStorages: [],
 	cacheKeyPrefix: '',
+	ttlUnits: 'ms',
 	enabledEvents: {
 		'cache-record:read': false,
 		'cache-record:written': false,

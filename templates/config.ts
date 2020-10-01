@@ -3,6 +3,8 @@ import { CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
 export default {
 	recordTTL: 60000, // record ttl in ms,
 
+	ttlUnits: 'ms', // time units for ttl record
+
 	currentCacheStorage: 'redis', // storages which used as default cache storage
 
 	enabledCacheStorages: ['in-memory', 'redis'], // storages which will be loaded

@@ -22,6 +22,7 @@ Supported cache storages:
       - [Enable custom context as default](#enable-custom-context-as-default)
       - [Cache fallback](#cache-fallback)
 - [Cache events](#cache-events)
+- [Cache record TTL](#cache-record-ttl)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -212,6 +213,21 @@ await Cache.tags('tag-1', 'tag-2', 'tag-3').flush()
 ```
 During this operation tags and tagger records will be removed from storage, however records with another tags will remain in your storage. This is  great feature for storing responses from different API's. You can tag each response by appropriate tag
 and flush responses only for desirable API.
+
+
+# Cache record TTL
+You can configure record TTL using cache config: 
+```js
+{	
+    recordTTL: 60000,
+    ttlUnits: 'ms'
+}
+```
+Or you can set record ttl as function parameter:
+```js
+ await Cache.put(userData, 1000)
+```
+Your value will be transformed to milliseconds using time units which configured by **ttlUnits** parameter in your cache config.
 
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
 [typescript-url]:  "typescript"

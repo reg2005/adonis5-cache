@@ -1,6 +1,6 @@
 {
   "name": "adonis5-cache",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Cache provider for AdonisJS 5",
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
@@ -136,6 +136,8 @@
     "@adonisjs/events": "^4.0.1",
     "@adonisjs/redis": "^4.1.2",
     "dayjs": "^1.8.34",
+    "memcached": "^2.2.2",
+    "ms": "^2.1.2",
     "ramda": "^0.27.1"
   }
 }

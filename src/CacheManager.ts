@@ -14,6 +14,7 @@ import CacheEventEmitter from './CacheEventEmitter'
 import { zipObj, isNil } from 'ramda'
 import TaggableCacheManager from './TaggableCacheManager'
 import { isAsyncFunction } from './TypeGuards'
+import ms from 'ms'
 
 export enum RegisteredCacheStorages {
 	REDIS = 'redis',
@@ -138,25 +139,25 @@ export default class CacheManager implements CacheManagerContract {
 		return cachedValues
 	}
 
-	public async put<T = any>(key: string, value: T, ttl: number = this.recordTTL) {
+	public async put<T = any>(key: string, value: T, ttl?: number) {
 		const operationResult = await this.storage.put(
 			this.context,
 			this.buildRecordKey(key),
 			value,
-			ttl
+			this.resolveCacheTTL(ttl)
 		)
 		this.eventEmitter.emitEvent('cache-record:written', { [key]: value })
 		this.restoreState()
 		return operationResult
 	}
 
-	public async putMany<T = any>(cacheDictionary: { [p: string]: T }, ttl: number = this.recordTTL) {
+	public async putMany<T = any>(cacheDictionary: { [p: string]: T }, ttl?: number) {
 		const operationResult = await this.storage.putMany(
 			this.context,
 			Object.entries(cacheDictionary).reduce((acc, [key, value]) => {
 				return { ...acc, [this.buildRecordKey(key)]: value }
 			}, {}),
-			ttl
+			this.resolveCacheTTL(ttl)
 		)
 		this.eventEmitter.emitEvent('cache-record:written', cacheDictionary)
 		this.restoreState()
@@ -224,5 +225,9 @@ export default class CacheManager implements CacheManagerContract {
 		}
 
 		return Promise.resolve(fallback)
+	}
+
+	private resolveCacheTTL(ttl: number | undefined): number {
+		return Number(ms((ttl || this.recordTTL) + this.cacheConfig.ttlUnits))
 	}
 }

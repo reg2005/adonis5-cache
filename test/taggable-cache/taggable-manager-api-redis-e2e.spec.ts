@@ -17,6 +17,7 @@ const cacheConfig: CacheConfig = {
 	currentCacheStorage: 'redis',
 	enabledCacheStorages: ['redis'],
 	cacheKeyPrefix: '',
+	ttlUnits: 'ms',
 	enabledEvents: {
 		'cache-record:read': false,
 		'cache-record:written': false,

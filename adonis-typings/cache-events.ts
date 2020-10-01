@@ -22,11 +22,45 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 
 	export type CacheEventsConfig = Record<keyof CacheEvents, boolean>
 
+	export type TtlUnits =
+		| 'years'
+		| 'year'
+		| 'yrs'
+		| 'yr'
+		| 'y'
+		| 'weeks'
+		| 'week'
+		| 'w'
+		| 'days'
+		| 'day'
+		| 'd'
+		| 'hours'
+		| 'hour'
+		| 'hrs'
+		| 'hr'
+		| 'h'
+		| 'minutes'
+		| 'minute'
+		| 'mins'
+		| 'min'
+		| 'm'
+		| 'seconds'
+		| 'second'
+		| 'secs'
+		| 'sec'
+		| 's'
+		| 'milliseconds'
+		| 'millisecond'
+		| 'msecs'
+		| 'msec'
+		| 'ms'
+
 	export interface CacheConfig {
 		recordTTL: number
 		currentCacheStorage: CacheStorage
 		enabledCacheStorages: CacheStorage[]
 		cacheKeyPrefix: string
+		ttlUnits: TtlUnits
 
 		enabledEvents: CacheEventsConfig
 	}
