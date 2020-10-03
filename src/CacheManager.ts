@@ -43,7 +43,7 @@ export default class CacheManager implements CacheManagerContract {
 		this.cacheConfig = iocContainer.use('Adonis/Core/Config').get('cache')
 		this.eventEmitter = new CacheEventEmitter(
 			this.cacheConfig.enabledEvents,
-			iocContainer.use('Adonis/Core/Event')
+			iocContainer.use('Adonis/Core/Event'),
 		)
 		this.currentCacheStorageName = this.cacheConfig.currentCacheStorage
 
@@ -121,18 +121,24 @@ export default class CacheManager implements CacheManagerContract {
 		return this
 	}
 
-	public async get<T = any>(key: string, fallback?: T | AsyncFunction<T>): Promise<T | null> {
+	public async get<T = any>(
+		key: string,
+		fallback?: T | AsyncFunction<T>,
+		ttl?: number,
+	): Promise<T | null> {
 		const cacheValue = await this.storage.get<T>(this.context, this.buildRecordKey(key))
 		this.emitEventsOnReadOperations({ [key]: cacheValue })
 		this.restoreState()
 
-		return this.resolveFallback(cacheValue, fallback || null)
+		return isNil(cacheValue) && fallback
+			? await this.resolveFallback(key, fallback, this.resolveCacheTTL(ttl))
+			: cacheValue
 	}
 
 	public async getMany<T = any>(keys: string[]): Promise<(T | null)[]> {
 		const cachedValues = await this.storage.getMany<T>(
 			this.context,
-			keys.map((key) => this.buildRecordKey(key))
+			keys.map((key) => this.buildRecordKey(key)),
 		)
 		this.emitEventsOnReadOperations(zipObj(keys, cachedValues))
 		this.restoreState()
@@ -144,7 +150,7 @@ export default class CacheManager implements CacheManagerContract {
 			this.context,
 			this.buildRecordKey(key),
 			value,
-			this.resolveCacheTTL(ttl)
+			this.resolveCacheTTL(ttl),
 		)
 		this.eventEmitter.emitEvent('cache-record:written', { [key]: value })
 		this.restoreState()
@@ -157,7 +163,7 @@ export default class CacheManager implements CacheManagerContract {
 			Object.entries(cacheDictionary).reduce((acc, [key, value]) => {
 				return { ...acc, [this.buildRecordKey(key)]: value }
 			}, {}),
-			this.resolveCacheTTL(ttl)
+			this.resolveCacheTTL(ttl),
 		)
 		this.eventEmitter.emitEvent('cache-record:written', cacheDictionary)
 		this.restoreState()
@@ -215,16 +221,16 @@ export default class CacheManager implements CacheManagerContract {
 		this.cacheContexts = { [this.currentCacheContextName]: DefaultCacheContext }
 	}
 
-	private resolveFallback<T = any>(value: T | null, fallback: T | AsyncFunction<T>): Promise<T> {
-		if (!isNil(value)) {
-			return Promise.resolve(value)
-		}
+	private async resolveFallback<T = any>(
+		key: string,
+		fallback: T | AsyncFunction<T>,
+		ttl: number
+	): Promise<T> {
+		const fallbackValue: T = isAsyncFunction(fallback) ? await fallback() : fallback
 
-		if (isAsyncFunction(fallback)) {
-			return fallback()
-		}
+		await this.put(key, fallbackValue, this.resolveCacheTTL(ttl))
 
-		return Promise.resolve(fallback)
+		return fallbackValue
 	}
 
 	private resolveCacheTTL(ttl: number | undefined): number {

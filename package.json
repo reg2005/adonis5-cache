@@ -136,7 +136,6 @@
     "@adonisjs/events": "^4.0.1",
     "@adonisjs/redis": "^4.1.2",
     "dayjs": "^1.8.34",
-    "memcached": "^2.2.2",
     "ms": "^2.1.2",
     "ramda": "^0.27.1"
   }

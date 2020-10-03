@@ -47,6 +47,7 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 	export interface BaseCacheManagerContract {
 		get<T = any>(key: string): Promise<T | null>
 		get<T = any>(key: string, fallback: T | AsyncFunction<T>): Promise<T | null>
+		get<T = any>(key: string, fallback: T | AsyncFunction<T>, ttl: number): Promise<T | null>
 
 		getMany<T = any>(keys: string[]): Promise<(T | null)[]>
 

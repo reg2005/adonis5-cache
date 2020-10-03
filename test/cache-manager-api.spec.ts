@@ -68,6 +68,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		const receivedValue = await cacheManager.get(testKey, fallbackValue)
 
 		expect(receivedValue).to.equal(fallbackValue)
+		verify(mockedStorage.put(anything(), testKey, fallbackValue, cacheConfig.recordTTL)).once()
 	}).timeout(0)
 
 	test("should return results of fallback func, if cached value doesn't exists", async () => {
@@ -84,6 +85,43 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		const receivedValue = await cacheManager.get(testKey, () => fallbackValue)
 
 		expect(receivedValue).to.equal(fallbackValue)
+		verify(mockedStorage.put(anything(), testKey, fallbackValue, cacheConfig.recordTTL)).once()
+	}).timeout(0)
+
+	test("should save fallback value to cache with custom ttl", async () => {
+		const testKey = 'testKey'
+		const fallbackValue = 'fallback-value'
+		const storageName = 'mocked-in-memory-store'
+		const ttl = 2000
+
+		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+
+		cacheManager.registerStorage(storageName, instance(mockedStorage))
+		cacheManager.enableStorage(storageName)
+
+		const receivedValue = await cacheManager.get(testKey, fallbackValue, ttl)
+
+		expect(receivedValue).to.equal(fallbackValue)
+		verify(mockedStorage.put(anything(), testKey, fallbackValue, ttl)).once()
+	}).timeout(0)
+
+	test('should save async function fallback result to cache with custom ttl', async () => {
+		const testKey = 'testKey'
+		const fallbackValue = 'fallback-value'
+		const storageName = 'mocked-in-memory-store'
+		const ttl = 2000
+
+		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+
+		cacheManager.registerStorage(storageName, instance(mockedStorage))
+		cacheManager.enableStorage(storageName)
+
+		const receivedValue = await cacheManager.get(testKey, () => fallbackValue, ttl)
+
+		expect(receivedValue).to.equal(fallbackValue)
+		verify(mockedStorage.put(anything(), testKey, fallbackValue, ttl)).once()
 	}).timeout(0)
 
 	test('should get value from selected cache storage', async () => {
