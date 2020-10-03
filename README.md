@@ -17,11 +17,12 @@ Supported cache storages:
 - [Installation](#installation)
 - [Sample Usage](#sample-usage)
 - [Custom storages](#custom-storages)
-      - [Storage toggle](#storage-toggle)
+    - [Storage toggle](#storage-toggle)
 - [Custom context](#custom-context)
-      - [Enable custom context as default](#enable-custom-context-as-default)
-      - [Cache fallback](#cache-fallback)
+    - [Enable custom context as default](#enable-custom-context-as-default)
+    - [Cache fallback](#cache-fallback)
 - [Cache events](#cache-events)
+- [Cache tags](#cache-tags)
 - [Cache record TTL](#cache-record-ttl)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -98,7 +99,7 @@ import Cache from '@ioc:Adonis/Addons/Adonis5-Cache'
 Cache.registerStorage('storage-name', storageInstance)
 ```
 
-#### Storage toggle
+### Storage toggle
 After registration you can use your storage in such way:
 ```js
 const cachedValue = await Cache.viaStorage('storage-name').get('cache-key')
@@ -136,7 +137,7 @@ const cachedValue = await Cache.get<RecordDTO>('cache-key') // Reading data from
 await Cache.put('cache-key', cachedData) // Storing data to cache using custom context
 ```
 
-#### Enable custom context as default
+### Enable custom context as default
 
 Of course, you can enable your custom context as default cache context:
 ```js
@@ -144,7 +145,7 @@ Of course, you can enable your custom context as default cache context:
 Cache.enableContext('custom-context-name') // After this your cache operations will be use your custom context
 ```
 
-#### Cache fallback
+### Cache fallback
 You can pass fallback value when you calling get method:
 ```js
 const cachedValue = await Cache.get<RecordDTO>('cache-key', fallbackValue)
@@ -157,7 +158,10 @@ const cachedValue = await Cache.get<RecordDTO>('cache-key', async () => {
   return callApi(); 
 })
 ```
-
+If cache storage value doesn't exists fallback value will storage to cache by selected key. You can specify ttl for fallback value as function parameter:
+```js
+const cachedValue = await Cache.get<RecordDTO>('cache-key', fallbackValue, customTTL)
+```
 # Cache events 
 
 Cache provider implements several events:
@@ -190,7 +194,7 @@ You can configure which events are emitted with cache config:
 }
 ```
 
-#Cache tags
+# Cache tags
 
 When you need partial flushing your cache you can use cache tags. This features allow you tag your cache records and then
 flush only tagged records. For using cache tags you should call method __tags__ on cache manager with list of your tags as argument, then you get TaggedCacheManager, which allow you using tagged cache functionality. 
