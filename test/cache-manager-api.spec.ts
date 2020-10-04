@@ -88,7 +88,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		verify(mockedStorage.put(anything(), testKey, fallbackValue, cacheConfig.recordTTL)).once()
 	}).timeout(0)
 
-	test("should save fallback value to cache with custom ttl", async () => {
+	test('should save fallback value to cache with custom ttl', async () => {
 		const testKey = 'testKey'
 		const fallbackValue = 'fallback-value'
 		const storageName = 'mocked-in-memory-store'
