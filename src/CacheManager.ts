@@ -1,25 +1,17 @@
-import Redis from '@ioc:Adonis/Addons/Redis'
-import RedisStorage from './CacheStorages/RedisStorage'
 import DefaultCacheContext from './CacheContexts/DefaultCacheContext'
-import { IocContract } from '@adonisjs/fold/build'
 import {
 	CacheConfig,
 	CacheContextContract,
 	CacheManagerContract,
 	CacheStorageContract,
 	AsyncFunction,
+	ConstructorParams,
 } from '@ioc:Adonis/Addons/Adonis5-Cache'
-import InMemoryStorage from './CacheStorages/InMemoryStorage'
 import CacheEventEmitter from './CacheEventEmitter'
 import { zipObj, isNil } from 'ramda'
 import TaggableCacheManager from './TaggableCacheManager'
 import { isAsyncFunction } from './TypeGuards'
 import ms from 'ms'
-
-export enum RegisteredCacheStorages {
-	REDIS = 'redis',
-	IN_MEMORY = 'in-memory',
-}
 
 export type CacheStorageCollection = { [key: string]: CacheStorageContract }
 export type CacheContextCollection = { [key: string]: CacheContextContract }
@@ -39,15 +31,11 @@ export default class CacheManager implements CacheManagerContract {
 	protected eventEmitter: CacheEventEmitter
 	protected cacheTags: string[] = []
 
-	constructor(iocContainer: IocContract) {
-		this.cacheConfig = iocContainer.use('Adonis/Core/Config').get('cache')
-		this.eventEmitter = new CacheEventEmitter(
-			this.cacheConfig.enabledEvents,
-			iocContainer.use('Adonis/Core/Event')
-		)
+	constructor({ config, eventEmitter }: ConstructorParams) {
+		this.cacheConfig = config
+		this.eventEmitter = new CacheEventEmitter(this.cacheConfig.enabledEvents, eventEmitter)
 		this.currentCacheStorageName = this.cacheConfig.currentCacheStorage
 
-		this.initCacheStorages(iocContainer)
 		this.initCacheContexts()
 	}
 
@@ -188,17 +176,6 @@ export default class CacheManager implements CacheManagerContract {
 		this.tempStorageName = null
 		this.tempContextName = null
 		this.cacheTags = []
-	}
-
-	private initCacheStorages(iocContainer: IocContract) {
-		if (this.cacheConfig.enabledCacheStorages.includes(RegisteredCacheStorages.REDIS)) {
-			const redis: typeof Redis = iocContainer.use('Adonis/Addons/Redis')
-			this.registerStorage(RegisteredCacheStorages.REDIS, new RedisStorage(redis))
-		}
-
-		if (this.cacheConfig.enabledCacheStorages.includes(RegisteredCacheStorages.IN_MEMORY)) {
-			this.registerStorage(RegisteredCacheStorages.IN_MEMORY, new InMemoryStorage())
-		}
 	}
 
 	private emitEventsOnReadOperations<T = null>(cacheData: { [key: string]: T }) {

@@ -76,7 +76,7 @@ test.group('Adonis cache provider - taggable cache with redis storage', (group) 
 		})
 	}).timeout(0)
 
-	test('should save cache records with tags metadata', async () => {
+	test('should save cache record collection with tags metadata', async () => {
 		const tags = ['tag-1']
 
 		await cacheManager.tags(...tags).putMany({ [testKey]: testValue })
@@ -102,7 +102,7 @@ test.group('Adonis cache provider - taggable cache with redis storage', (group) 
 		})
 	}).timeout(0)
 
-	test('should flush tagged records and save without untagged', async () => {
+	test('should flush tagged records and stay untagged records', async () => {
 		await cacheManager.tags('tag-1').put('t-1', testValue)
 		await cacheManager.tags('tag-1', 'tag-2').put('t-2', testValue)
 		await cacheManager.tags('tag-3').put('t-3', testValue)
@@ -114,7 +114,7 @@ test.group('Adonis cache provider - taggable cache with redis storage', (group) 
 		expect(JSON.parse((await redis.get('t-3')) as string)).to.equal(testValue)
 	}).timeout(0)
 
-	test('should flush tagged records and save without untagged', async () => {
+	test('should flush tagged records by several tags and stay untagged records', async () => {
 		await cacheManager.tags('tag-1', 'tag-2').put('t-1', testValue)
 		await cacheManager.tags('tag-3').put('t-3', testValue)
 

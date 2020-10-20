@@ -1,4 +1,6 @@
 declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
+	import { EmitterContract } from '@ioc:Adonis/Core/Event'
+
 	type CacheSerializer = <T = any>(value: T) => string
 	type CacheDeserializer = <T = any>(value: string) => T
 
@@ -9,6 +11,7 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 	}
 
 	export interface CacheStorageContract {
+
 		get<T = any>(context: CacheContextContract, key: string): Promise<T | null>
 
 		getMany<T = any>(context: CacheContextContract, keys: string[]): Promise<(T | null)[]>
@@ -58,6 +61,11 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 		flush(): Promise<void>
 
 		forget(key: string): Promise<boolean>
+	}
+
+	export interface ConstructorParams {
+		config: CacheConfig
+		eventEmitter: EmitterContract
 	}
 
 	export interface CacheManagerContract extends BaseCacheManagerContract {
