@@ -3,10 +3,9 @@ import { AdonisApplication } from '../../test-helpers/TestAdonisApp'
 import AdonisCacheProvider from '../../providers/AdonisCacheProvider'
 import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
 
-// import { anything, instance, mock, objectContaining, verify, when } from 'ts-mockito'
 import { expect } from 'chai'
 import { flatten } from 'ramda'
-import { RedisConnectionContract } from '@ioc:Adonis/Addons/Redis'
+import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 import RedisProvider from '@adonisjs/redis/build/providers/RedisProvider'
 import redisConfig from '../fixtures/redis-test-config'
 import dayjs from 'dayjs'
@@ -29,7 +28,7 @@ const cacheConfig: CacheConfig = {
 test.group('Adonis cache provider - taggable cache with redis storage', (group) => {
 	let adonisApp: AdonisApplication
 	let cacheManager: CacheManagerContract
-	let redis: RedisConnectionContract
+	let redis: RedisManagerContract
 	let testKey: string = 'testKey'
 	let testValue: string = 'testValue'
 

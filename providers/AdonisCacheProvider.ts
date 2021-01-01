@@ -6,9 +6,15 @@ import { EmitterContract } from '@ioc:Adonis/Core/Event'
 import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { CacheConfig, CacheManagerContract } from '@ioc:Adonis/Addons/Adonis5-Cache'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
+import { Application } from '@adonisjs/application'
+import { ContainerBindings } from '@ioc:Adonis/Core/Application'
 
 export default class AdonisCacheProvider {
-	constructor(protected container: IocContract) {}
+	protected container: IocContract<ContainerBindings>
+
+	constructor(app: Application) {
+		this.container = app.container
+	}
 
 	public register(): void {
 		this.container.singleton('Adonis/Addons/Adonis5-Cache', () => {

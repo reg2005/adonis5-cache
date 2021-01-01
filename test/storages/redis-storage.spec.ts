@@ -5,7 +5,7 @@ import AdonisCacheProvider from '../../providers/AdonisCacheProvider'
 import RedisProvider from '@adonisjs/redis/build/providers/RedisProvider'
 import redisConfig from '../fixtures/redis-test-config'
 import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
-import { RedisConnectionContract } from '@ioc:Adonis/Addons/Redis'
+import { RedisManagerContract } from "@ioc:Adonis/Addons/Redis";
 import sleep from '../../test-helpers/utils/sleep'
 
 const cacheConfig: CacheConfig = {
@@ -25,7 +25,7 @@ const cacheConfig: CacheConfig = {
 test.group('Adonis cache provider with REDIS driver', (group) => {
 	let adonisApp: AdonisApplication
 	let cacheManager: CacheManagerContract
-	let redis: RedisConnectionContract
+	let redis: RedisManagerContract
 
 	group.before(async () => {
 		adonisApp = new AdonisApplication()

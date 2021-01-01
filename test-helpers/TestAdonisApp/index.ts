@@ -1,11 +1,11 @@
-import { IocContract } from '@adonisjs/fold/build'
 import { Ignitor } from '@adonisjs/core/build/src/Ignitor'
 import { createServer } from 'http'
-import { Bootstrapper } from '@adonisjs/core/build/src/Ignitor/Bootstrapper'
 import { HttpServer } from '@adonisjs/core/build/src/Ignitor/HttpServer'
-import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { join } from 'path'
+import { Application } from '@adonisjs/application'
+import { ApplicationContract, ContainerBindings } from "@ioc:Adonis/Core/Application";
+import { IocContract } from "@adonisjs/fold";
 
 export interface AdonisProvider {
 	register(): void
@@ -18,13 +18,12 @@ export interface ApplicationConfig {
 	appConfig: object
 }
 
-export type ProviderConstructor = new (ioc: IocContract) => AdonisProvider
+export type ProviderConstructor = new (app: ApplicationContract) => AdonisProvider
 
 export class AdonisApplication {
-	private _bootstrapper: Bootstrapper
 	private _httpServer: HttpServer
-	private _application: ApplicationContract
-	private customerProviderInstance: AdonisProvider[] = []
+	private _application: Application
+	private customerProviderInstances: AdonisProvider[] = []
 
 	constructor(
 		private customProviders: ProviderConstructor[] = [],
@@ -41,7 +40,7 @@ export class AdonisApplication {
 		return this
 	}
 
-	public async loadApp(): Promise<AdonisApplication> {
+	public async loadApp(): Promise<this> {
 		await this.initApplication()
 		await this.initCustomProviders()
 		await this.registerProviders()
@@ -51,7 +50,7 @@ export class AdonisApplication {
 		return this
 	}
 
-	public async loadAppWithHttpServer(): Promise<AdonisApplication> {
+	public async loadAppWithHttpServer(): Promise<this> {
 		await this.loadApp()
 		await this.startHttpServer()
 
@@ -59,54 +58,45 @@ export class AdonisApplication {
 	}
 
 	private initApplication() {
-		const ignitor = new Ignitor(join(__dirname, 'testAdonisApp'))
-		this._bootstrapper = ignitor.boostrapper()
-		this._httpServer = ignitor.httpServer()
-		this._application = this._bootstrapper.setup()
+		this._httpServer = new Ignitor(join(__dirname, 'testAdonisApp')).httpServer()
+		this._application = this._httpServer.application
 	}
 
 	private async initCustomProviders() {
-		this.customerProviderInstance = this.customProviders.map((Provider) => {
-			return new Provider(this._application.container)
+		this.customerProviderInstances = this.customProviders.map((Provider) => {
+			return new Provider(this._application)
 		})
 	}
 
 	private async registerProviders() {
-		this._bootstrapper.registerAliases()
-		this._bootstrapper.registerProviders(false)
-		this.customerProviderInstance.map((provider) => provider.register())
+		await this.application.setup()
+		this.application.registerProviders()
+		this.customerProviderInstances.map((provider) => provider.register())
 	}
 
 	private async initApplicationConfigs() {
-		const config: ConfigContract = this._application.container.use<ConfigContract>(
-			'Adonis/Core/Config'
-		)
+		const config: ConfigContract = this._application.container.use('Adonis/Core/Config')
 		this.appConfigs.map(({ appConfig, configName }) => config.set(configName, appConfig))
 	}
 
 	private async bootProviders() {
-		this.customerProviderInstance.map((provider) => provider.boot())
-		await this._bootstrapper.bootProviders()
+		this.customerProviderInstances.map((provider) => provider.boot())
+		await this.application.bootProviders()
 	}
 
 	private async startHttpServer() {
-		this._httpServer.injectBootstrapper(this._bootstrapper)
 		await this._httpServer.start((handler) => createServer(handler))
-	}
-
-	public get bootstrapper(): Bootstrapper {
-		return this._bootstrapper
 	}
 
 	public get httpServer(): HttpServer {
 		return this._httpServer
 	}
 
-	public get application(): ApplicationContract {
+	public get application(): Application {
 		return this._application
 	}
 
-	public get iocContainer(): IocContract {
+	public get iocContainer(): IocContract<ContainerBindings> {
 		return this._application.container
 	}
 
