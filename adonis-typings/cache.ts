@@ -11,7 +11,6 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 	}
 
 	export interface CacheStorageContract {
-
 		get<T = any>(context: CacheContextContract, key: string): Promise<T | null>
 
 		getMany<T = any>(context: CacheContextContract, keys: string[]): Promise<(T | null)[]>
@@ -27,6 +26,8 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 		flush(): Promise<void>
 
 		forget(key: string): Promise<boolean>
+
+		resolveTtl(ttlInMl: number): number
 	}
 
 	export interface TaggableStorageContract {
@@ -93,7 +94,7 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 		'put' | 'putMany' | 'flush'
 	> & { tags: string[] }
 
-	export type CacheStorage = 'redis' | 'in-memory' | string
+	export type CacheStorage = 'redis' | 'in-memory' | 'memcached' | string
 
 	export interface TagPayloadContract {
 		expirationTime: string

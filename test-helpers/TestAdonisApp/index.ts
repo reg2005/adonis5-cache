@@ -4,8 +4,8 @@ import { HttpServer } from '@adonisjs/core/build/src/Ignitor/HttpServer'
 import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { join } from 'path'
 import { Application } from '@adonisjs/application'
-import { ApplicationContract, ContainerBindings } from "@ioc:Adonis/Core/Application";
-import { IocContract } from "@adonisjs/fold";
+import { ApplicationContract, ContainerBindings } from '@ioc:Adonis/Core/Application'
+import { IocContract } from '@adonisjs/fold'
 
 export interface AdonisProvider {
 	register(): void
@@ -18,7 +18,9 @@ export interface ApplicationConfig {
 	appConfig: object
 }
 
-export type ProviderConstructor = new (app: ApplicationContract) => AdonisProvider
+export type ProviderConstructor = new (
+	app: ApplicationContract | IocContract<ContainerBindings>
+) => AdonisProvider
 
 export class AdonisApplication {
 	private _httpServer: HttpServer
@@ -64,7 +66,11 @@ export class AdonisApplication {
 
 	private async initCustomProviders() {
 		this.customerProviderInstances = this.customProviders.map((Provider) => {
-			return new Provider(this._application)
+			if (['AdonisMemcachedClientProvider', 'AdonisCacheProvider'].includes(Provider.name)) {
+				return new Provider(this.iocContainer)
+			} else {
+				return new Provider(this._application)
+			}
 		})
 	}
 

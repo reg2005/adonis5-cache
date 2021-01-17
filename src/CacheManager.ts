@@ -211,6 +211,7 @@ export default class CacheManager implements CacheManagerContract {
 	}
 
 	private resolveCacheTTL(ttl: number | undefined): number {
-		return Number(ms((ttl || this.recordTTL) + this.cacheConfig.ttlUnits))
+		const ttlInMilliseconds = Number(ms((ttl || this.recordTTL) + this.cacheConfig.ttlUnits))
+		return this.storage.resolveTtl(ttlInMilliseconds)
 	}
 }

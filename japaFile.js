@@ -4,8 +4,6 @@ const tsnode = require('ts-node')
 const { iocTransformer } = require('@adonisjs/ioc-transformer')
 const { files: typingsFiles } = require('./tsconfig.json')
 
-// require('@adonisjs/require-ts/build/register')
-
 const testFrameworkConfiguration = {
 	aliases: {
 		App: 'app',
