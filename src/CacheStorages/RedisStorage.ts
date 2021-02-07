@@ -59,4 +59,8 @@ export default class RedisStorage implements CacheStorageContract, TaggableStora
 	public async removeTag(tag: string): Promise<void> {
 		await this.redisConnection.del(tag)
 	}
+
+	public resolveTtl(ttlInMl: number): number {
+		return ttlInMl
+	}
 }

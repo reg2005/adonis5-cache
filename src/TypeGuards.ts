@@ -12,6 +12,6 @@ export function isTagPayloadContract(storage: object): storage is TagPayloadCont
 	return 'keys' in storage && 'expirationTime' in storage
 }
 
-export function isAsyncFunction(value: unknown): value is AsyncFunction {
+export function isFunction(value: unknown): value is AsyncFunction {
 	return typeof value === 'function'
 }

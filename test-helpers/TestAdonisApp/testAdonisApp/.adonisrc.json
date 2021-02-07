@@ -2,5 +2,6 @@
 	"autoloads": {
 		"App": "./app"
 	},
-	"providers": ["./providers/TestAppProvider.ts"]
+	"exceptionHandlerNamespace": "App/Exceptions/Handler",
+	"providers": ["@adonisjs/core"]
 }

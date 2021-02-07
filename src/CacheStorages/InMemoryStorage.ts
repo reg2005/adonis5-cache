@@ -86,4 +86,8 @@ export default class InMemoryStorage implements CacheStorageContract, TaggableSt
 	public async removeTag(tag: string) {
 		delete this.cacheStorage.tags[tag]
 	}
+
+	public resolveTtl(ttlInMl: number): number {
+		return ttlInMl
+	}
 }

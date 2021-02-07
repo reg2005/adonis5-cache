@@ -10,7 +10,7 @@ import {
 import CacheEventEmitter from './CacheEventEmitter'
 import { zipObj, isNil } from 'ramda'
 import TaggableCacheManager from './TaggableCacheManager'
-import { isAsyncFunction } from './TypeGuards'
+import { isFunction } from './TypeGuards'
 import ms from 'ms'
 
 export type CacheStorageCollection = { [key: string]: CacheStorageContract }
@@ -203,7 +203,7 @@ export default class CacheManager implements CacheManagerContract {
 		fallback: T | AsyncFunction<T>,
 		ttl: number
 	): Promise<T> {
-		const fallbackValue: T = isAsyncFunction(fallback) ? await fallback() : fallback
+		const fallbackValue: T = isFunction(fallback) ? await fallback() : fallback
 
 		await this.put(key, fallbackValue, this.resolveCacheTTL(ttl))
 
@@ -211,6 +211,7 @@ export default class CacheManager implements CacheManagerContract {
 	}
 
 	private resolveCacheTTL(ttl: number | undefined): number {
-		return Number(ms((ttl || this.recordTTL) + this.cacheConfig.ttlUnits))
+		const ttlInMilliseconds = Number(ms((ttl || this.recordTTL) + this.cacheConfig.ttlUnits))
+		return this.storage.resolveTtl(ttlInMilliseconds)
 	}
 }

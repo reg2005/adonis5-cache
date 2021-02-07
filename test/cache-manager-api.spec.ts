@@ -61,6 +61,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
 		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+		when(mockedStorage.resolveTtl(cacheConfig.recordTTL)).thenReturn(cacheConfig.recordTTL)
 
 		cacheManager.registerStorage(storageName, instance(mockedStorage))
 		cacheManager.enableStorage(storageName)
@@ -71,6 +72,25 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		verify(mockedStorage.put(anything(), testKey, fallbackValue, cacheConfig.recordTTL)).once()
 	}).timeout(0)
 
+	test('should set fallback value to cache, with custom storage ttl', async () => {
+		const testKey = 'testKey'
+		const fallbackValue = 'fallback-value'
+		const storageName = 'mocked-in-memory-store'
+		const storageCustomTtl = 0
+
+		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+		when(mockedStorage.resolveTtl(cacheConfig.recordTTL)).thenReturn(storageCustomTtl)
+
+		cacheManager.registerStorage(storageName, instance(mockedStorage))
+		cacheManager.enableStorage(storageName)
+
+		const receivedValue = await cacheManager.get(testKey, fallbackValue)
+
+		expect(receivedValue).to.equal(fallbackValue)
+		verify(mockedStorage.put(anything(), testKey, fallbackValue, storageCustomTtl)).once()
+	}).timeout(0)
+
 	test("should return results of fallback func, if cached value doesn't exists", async () => {
 		const testKey = 'testKey'
 		const fallbackValue = 'fallback-value'
@@ -78,6 +98,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
 		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+		when(mockedStorage.resolveTtl(cacheConfig.recordTTL)).thenReturn(cacheConfig.recordTTL)
 
 		cacheManager.registerStorage(storageName, instance(mockedStorage))
 		cacheManager.enableStorage(storageName)
@@ -96,6 +117,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
 		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+		when(mockedStorage.resolveTtl(ttl)).thenReturn(ttl)
 
 		cacheManager.registerStorage(storageName, instance(mockedStorage))
 		cacheManager.enableStorage(storageName)
@@ -114,6 +136,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
 		when(mockedStorage.get(anything(), testKey)).thenReturn(Promise.resolve(null))
+		when(mockedStorage.resolveTtl(ttl)).thenReturn(ttl)
 
 		cacheManager.registerStorage(storageName, instance(mockedStorage))
 		cacheManager.enableStorage(storageName)
@@ -195,6 +218,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
+		when(mockedStorage.resolveTtl(testTTL)).thenReturn(testTTL)
 
 		await cacheManager.put(testKey, testValue, testTTL)
 
@@ -207,6 +231,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		const storageName = 'test-storage'
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.resolveTtl(cacheConfig.recordTTL)).thenReturn(cacheConfig.recordTTL)
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
 
 		await cacheManager.put(testKey, testValue)
@@ -219,6 +244,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		const storageName = 'test-storage'
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.resolveTtl(cacheConfig.recordTTL)).thenReturn(cacheConfig.recordTTL)
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
 
 		await cacheManager.putMany(testMap)
@@ -233,6 +259,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		const testTTL = 100
 		const storageName = 'test-storage'
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.resolveTtl(testTTL)).thenReturn(testTTL)
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
 
 		await cacheManager.putMany(testMap, testTTL)
@@ -290,6 +317,7 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		config.set('cache.cacheKeyPrefix', cacheKeyPrefix)
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.resolveTtl(cacheConfig.recordTTL)).thenReturn(cacheConfig.recordTTL)
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
 
 		await cacheManager.put(testKey, testValue, cacheConfig.recordTTL)
@@ -327,6 +355,8 @@ test.group('Adonis cache provider - test cache manager API', (group) => {
 		config.set('cache.cacheKeyPrefix', cacheKeyPrefix)
 
 		const mockedStorage: InMemoryStorage = mock(InMemoryStorage)
+		when(mockedStorage.resolveTtl(cacheConfig.recordTTL)).thenReturn(cacheConfig.recordTTL)
+
 		cacheManager.registerStorage(storageName, instance(mockedStorage)).enableStorage(storageName)
 
 		await cacheManager.putMany(testMap)
