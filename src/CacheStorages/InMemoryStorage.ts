@@ -29,7 +29,6 @@ export default class InMemoryStorage implements CacheStorageContract, TaggableSt
 
 	public async get<T = any>(context: CacheContextContract, key: string): Promise<T | null> {
 		const { recordExpirationTime, recordValue = null } = this.cacheStorage[key] || {}
-
 		return recordValue !== null && dayjs().isBefore(dayjs(recordExpirationTime))
 			? context.deserialize(recordValue)
 			: null

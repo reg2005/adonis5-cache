@@ -12,13 +12,12 @@ import { zipObj, isNil } from 'ramda'
 import TaggableCacheManager from './TaggableCacheManager'
 import { isFunction } from './TypeGuards'
 import ms from 'ms'
+import TimeConverter from './Utils/TimeConverter'
 
-export type CacheStorageCollection = { [key: string]: CacheStorageContract }
-export type CacheContextCollection = { [key: string]: CacheContextContract }
+export type CacheStorageCollection = Record<string, CacheStorageContract>
+export type CacheContextCollection = Record<string, CacheContextContract>
 
 export default class CacheManager implements CacheManagerContract {
-	public static readonly DEFAULT_RECORD_TTL = 6000
-
 	protected cacheStorages: CacheStorageCollection = {}
 	protected cacheContexts: CacheContextCollection = {}
 	protected cacheConfig: CacheConfig
@@ -30,17 +29,18 @@ export default class CacheManager implements CacheManagerContract {
 	protected tempStorageName: string | null = null
 	protected eventEmitter: CacheEventEmitter
 	protected cacheTags: string[] = []
+	protected timeConverter: TimeConverter
 
 	constructor({ config, eventEmitter }: ConstructorParams) {
 		this.cacheConfig = config
 		this.eventEmitter = new CacheEventEmitter(this.cacheConfig.enabledEvents, eventEmitter)
 		this.currentCacheStorageName = this.cacheConfig.currentCacheStorage
-
-		this.initCacheContexts()
+		this.timeConverter = new TimeConverter(config.recordTTL, this.cacheConfig.ttlUnits)
+		this.initializeManager()
 	}
 
 	public get recordTTL(): number {
-		return this.cacheConfig.recordTTL || CacheManager.DEFAULT_RECORD_TTL
+		return this.cacheConfig.recordTTL
 	}
 
 	public get recordKeyPrefix(): string {
@@ -178,7 +178,7 @@ export default class CacheManager implements CacheManagerContract {
 		this.cacheTags = []
 	}
 
-	private emitEventsOnReadOperations<T = null>(cacheData: { [key: string]: T }) {
+	private emitEventsOnReadOperations<T = null>(cacheData: Record<string, T>) {
 		const missedKeys: string[] = []
 		const storedData = {}
 		for (const [key, value] of Object.entries(cacheData)) {
@@ -193,7 +193,7 @@ export default class CacheManager implements CacheManagerContract {
 		}
 	}
 
-	private initCacheContexts() {
+	private initializeManager() {
 		this.currentCacheContextName = 'DEFAULT'
 		this.cacheContexts = { [this.currentCacheContextName]: DefaultCacheContext }
 	}
