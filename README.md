@@ -350,7 +350,7 @@ For enabling you should add sharable cache provider:
 and setup your `config/cache.ts` for using shared cache
 ```js
 {
-sharedCacheConfig: {
+	sharedCacheConfig: {
 		isSharingEnabled: true,
 		syncInterval: 2000
 	}
