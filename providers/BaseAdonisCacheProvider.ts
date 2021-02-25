@@ -16,7 +16,7 @@ import MemcachedStorage from '../src/CacheStorages/MemcachedStorage'
 
 export default abstract class BaseAdonisCacheProvider {
 	public static needsApplication = true
-	public container: IocContract<ContainerBindings>
+	protected container: IocContract<ContainerBindings>
 
 	abstract get providerAlias(): string
 
