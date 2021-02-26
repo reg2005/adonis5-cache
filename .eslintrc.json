@@ -11,5 +11,8 @@
 		"prettier/prettier": [
 			"error"
 		]
+	},
+	"parserOptions": {
+		"project": "./tsconfig.eslint.json"
 	}
 }

@@ -28,6 +28,7 @@ Supported cache storages:
 - [Cache events](#cache-events)
 - [Cache tags](#cache-tags)
 - [Cache record TTL](#cache-record-ttl)
+- [Sharable cache](#sharable-cache)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -333,6 +334,45 @@ Or you can set record ttl as function parameter:
 
 Your value will be transformed to milliseconds using time units which configured by **ttlUnits** parameter in your cache
 config.
+
+# Sharable cache
+When you need to share cache between several instances you can enable sharable mode.  
+For enabling you should add sharable cache provider:
+```json
+{
+	"providers": [
+		"./providers/AppProvider",
+		"adonis5-cache",
+		"adonis5-cache/sharable-cache-provider"
+	]
+}
+```
+and setup your `config/cache.ts` for using shared cache
+```js
+{
+	sharedCacheConfig: {
+		isSharingEnabled: true,
+		syncInterval: 2000
+	}
+}
+```
+- isSharingEnabled - responds for enabling sharing mode for cache 
+- syncInterval - interval between running sync operation. Use milliseconds unit for this option
+
+
+Cache synchronized via redis as transport layer. So you need to install [adonis-redis](https://www.npmjs.com/package/@adonisjs/redis/v/alpha) package for using sharable cache.
+```bash
+npm i @adonisjs/redis@alpha
+```
+
+For manual enabling and disabling synchronization you can call special methods on cache manager instance
+```js
+import CacheManager from "@ioc:Adonis/Addons/Adonis5-Cache";
+
+CacheManager.stopSynchronization()
+
+CacheManager.runSynchronization()
+```
 
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
 

@@ -1,6 +1,9 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
+		"target": "es2019",
+		"module": "commonjs",
+		"lib": ["es2019"],
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
@@ -13,5 +16,7 @@
 		"./node_modules/@adonisjs/events/build/adonis-typings/events.d.ts",
 		"./node_modules/adonis5-memcached-client/build/adonis-typings/index.d.ts",
 		"./adonis-typings/index.ts"
-	]
+	],
+	"include": ["**/*"],
+	"exclude": ["test", "test-helpers"]
 }

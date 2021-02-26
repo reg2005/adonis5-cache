@@ -5,7 +5,7 @@ import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { join } from 'path'
 import { Application } from '@adonisjs/application'
 import { ApplicationContract, ContainerBindings } from '@ioc:Adonis/Core/Application'
-import { IocContract } from '@adonisjs/fold'
+import { IocContract } from '@adonisjs/fold/build'
 
 export interface AdonisProvider {
 	register(): void
@@ -66,17 +66,15 @@ export class AdonisApplication {
 
 	private async initCustomProviders() {
 		this.customerProviderInstances = this.customProviders.map((Provider) => {
-			if (['AdonisMemcachedClientProvider', 'AdonisCacheProvider'].includes(Provider.name)) {
-				return new Provider(this.iocContainer)
-			} else {
-				return new Provider(this._application)
-			}
+			return new Provider(
+				Provider?.needsApplication ? this.application : this.application.container
+			)
 		})
 	}
 
 	private async registerProviders() {
 		await this.application.setup()
-		this.application.registerProviders()
+		await this.application.registerProviders()
 		this.customerProviderInstances.map((provider) => provider.register())
 	}
 

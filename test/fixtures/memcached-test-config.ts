@@ -8,7 +8,6 @@ if (!process.env.MEMCACHED_SERVER_URL) {
 }
 
 const config: AdonisMemcachedClientConfig = {
-	server: process.env.MEMCACHED_SERVER_URL || process.env.MEMCACHED_SERVER_URL,
+	server: process.env.MEMCACHED_SERVER_URL,
 }
-
 export default config

@@ -3,5 +3,5 @@
 		"App": "./app"
 	},
 	"exceptionHandlerNamespace": "App/Exceptions/Handler",
-	"providers": ["@adonisjs/core"]
+	"providers": ["@adonisjs/core", "@adonisjs/events"]
 }

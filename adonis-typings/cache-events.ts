@@ -63,6 +63,13 @@ declare module '@ioc:Adonis/Addons/Adonis5-Cache' {
 		ttlUnits: TtlUnits
 
 		enabledEvents: CacheEventsConfig
+		sharedCacheConfig?: SharedCacheConfig
+	}
+
+	interface SharedCacheConfig {
+		isSharingEnabled: boolean
+		syncInterval: number
+		rootNode: boolean
 	}
 }
 

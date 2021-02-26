@@ -67,7 +67,8 @@
     "build/providers",
     "build/templates",
     "build/index.d.ts",
-    "build/index.js"
+    "build/index.js",
+    "build/sharable-cache-provider.js"
   ],
   "adonisjs": {
     "types": "adonis5-cache",
@@ -96,7 +97,8 @@
   "dependencies": {
     "dayjs": "^1.8.34",
     "ms": "^2.1.2",
-    "ramda": "^0.27.1"
+    "ramda": "^0.27.1",
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "adonis5-memcached-client": "^1.0.5",
@@ -104,15 +106,18 @@
     "@adonisjs/events": "^4.0.1"
   },
   "devDependencies": {
-    "@adonisjs/ace": "^6.9.3",
-    "@adonisjs/core": "^5.0.4-preview-rc-2.1",
-    "@adonisjs/fold": "^7.0.9",
-    "@adonisjs/ioc-transformer": "^1.0.2",
+    "@adonisjs/core": "^5.0.5-canary-rc-2",
+    "@adonisjs/events": "^6.0.0",
     "@adonisjs/logger": "^2.0.7",
-    "@adonisjs/mrm-preset": "^2.4.0",
+    "@adonisjs/mrm-preset": "^3.0.0",
+    "@adonisjs/redis": "^5.0.9",
+    "@adonisjs/require-ts": "^2.0.2",
     "@poppinss/dev-utils": "^1.0.11",
-    "@types/node": "^14.14.9",
-    "@types/ramda": "^0.27.19",
+    "@types/chai": "^4.2.15",
+    "@types/memcached": "^2.2.6",
+    "@types/node": "^14.14.31",
+    "@types/ramda": "^0.27.38",
+    "adonis5-memcached-client": "^1.0.5",
     "chai": "^4.2.0",
     "commitizen": "^4.1.2",
     "cpx": "^1.5.0",
@@ -121,15 +126,15 @@
     "del-cli": "^3.0.1",
     "doctoc": "^1.4.0",
     "dotenv": "^8.2.0",
-    "eslint": "^7.5.0",
+    "eslint": "^7.20.0",
     "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-adonis": "^1.0.14",
+    "eslint-plugin-adonis": "^1.2.1",
     "eslint-plugin-prettier": "^3.1.4",
     "get-port": "^5.1.1",
     "github-label-sync": "^2.0.0",
     "husky": "^4.2.5",
     "japa": "^3.1.1",
-    "mrm": "^2.3.3",
+    "mrm": "^2.5.19",
     "np": "^6.3.2",
     "npm-audit-html": "^1.4.1",
     "pino-pretty": "^4.1.0",
@@ -138,12 +143,7 @@
     "source-map-support": "^0.5.19",
     "supertest": "^4.0.2",
     "ts-mockito": "^2.6.1",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.7",
-    "yargs": "^15.4.1",
-    "@types/memcached": "^2.2.6",
-    "adonis5-memcached-client": "^1.0.5",
-    "@adonisjs/redis": "^5.0.9",
-    "@adonisjs/events": "^4.0.1"
+    "typescript": "^4.1.5",
+    "yargs": "^15.4.1"
   }
 }
