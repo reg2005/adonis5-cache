@@ -66,7 +66,7 @@ export class AdonisApplication {
 
 	private async initCustomProviders() {
 		this.customerProviderInstances = this.customProviders.map((Provider) => {
-			if (['AdonisMemcachedClientProvider', 'AdonisCacheProvider'].includes(Provider.name)) {
+			if (['AdonisMemcachedClientProvider'].includes(Provider.name)) {
 				return new Provider(this.iocContainer)
 			} else {
 				return new Provider(this._application)
@@ -76,8 +76,10 @@ export class AdonisApplication {
 
 	private async registerProviders() {
 		await this.application.setup()
-		this.application.registerProviders()
-		this.customerProviderInstances.map((provider) => provider.register())
+		await this.application.registerProviders()
+		for (const provider of this.customerProviderInstances) {
+			await provider.register()
+		}
 	}
 
 	private async initApplicationConfigs() {
@@ -86,7 +88,9 @@ export class AdonisApplication {
 	}
 
 	private async bootProviders() {
-		this.customerProviderInstances.map((provider) => provider.boot())
+		for (const provider of this.customerProviderInstances) {
+			await provider.boot()
+		}
 		await this.application.bootProviders()
 	}
 

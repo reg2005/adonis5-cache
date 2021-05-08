@@ -6,14 +6,19 @@ import { EmitterContract } from '@ioc:Adonis/Core/Event'
 import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { CacheConfig, CacheManagerContract } from '@ioc:Adonis/Addons/Adonis5-Cache'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
-import { ContainerBindings } from '@ioc:Adonis/Core/Application'
 import { AdonisMemcachedClientContract } from '@ioc:Adonis/Addons/Adonis5-MemcachedClient'
 import MemcachedStorage from '../src/CacheStorages/MemcachedStorage'
+import { Application } from '@adonisjs/application'
 
 export default class AdonisCacheProvider {
-	constructor(protected container: IocContract<ContainerBindings>) {}
+	public static needsApplication = true
+	private container: IocContract
 
-	public register(): void {
+	constructor(protected application: Application) {
+		this.container = application.container
+	}
+
+	public async register(): Promise<void> {
 		this.container.singleton('Adonis/Addons/Adonis5-Cache', () => {
 			const eventEmitter: EmitterContract = this.container.use('Adonis/Core/Event')
 			const config: ConfigContract = this.container.use('Adonis/Core/Config')
@@ -25,7 +30,7 @@ export default class AdonisCacheProvider {
 		})
 	}
 
-	public boot(): void {
+	public async boot(): Promise<void> {
 		const cache: CacheManagerContract = this.container.use('Adonis/Addons/Adonis5-Cache')
 		const cacheConfig: CacheConfig = this.container.use('Adonis/Core/Config').get('cache')
 

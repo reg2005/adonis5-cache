@@ -4,8 +4,8 @@ services:
     image: 'redis:alpine'
     ports:
       - $REDIS_PORT:6379
-    memcached:
-      image: 'memcached:alpine'
-      ports:
-        - $MEMCACHED_PORT:11211
+  memcached:
+    image: 'memcached:alpine'
+    ports:
+      - $MEMCACHED_PORT:11211
 
