@@ -64,7 +64,7 @@ test.group('Adonis cache provider - taggable cache with in-memory storage', (gro
 		const savedTaggedMetadataRecords = flatten(
 			await Promise.all(
 				tags.map((tag) => {
-					return ((memoryStorage as unknown) as TaggableStorageContract).readTag(buildTagKey(tag))
+					return (memoryStorage as unknown as TaggableStorageContract).readTag(buildTagKey(tag))
 				})
 			)
 		)
@@ -90,7 +90,7 @@ test.group('Adonis cache provider - taggable cache with in-memory storage', (gro
 		const savedTaggedMetadataRecords = flatten(
 			await Promise.all(
 				tags.map((tag) => {
-					return ((memoryStorage as unknown) as TaggableStorageContract).readTag(buildTagKey(tag))
+					return (memoryStorage as unknown as TaggableStorageContract).readTag(buildTagKey(tag))
 				})
 			)
 		)
