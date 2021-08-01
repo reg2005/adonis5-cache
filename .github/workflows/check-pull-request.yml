@@ -26,7 +26,6 @@ jobs:
         run: npm run lint
       - name: Run tests
         run: npm run test
-
       env:
         REDIS_PORT: 6379
         MEMCACHED_SERVER_URL: localhost:11211
