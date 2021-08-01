@@ -345,3 +345,4 @@ config.
 [license-image]: https://img.shields.io/npm/l/adonis5-cache?color=blueviolet&style=for-the-badge
 
 [license-url]: LICENSE.md "license"
+
