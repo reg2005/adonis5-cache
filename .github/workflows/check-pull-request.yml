@@ -1,0 +1,34 @@
+name: Check pull request
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-verstion: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Setup memcached
+        uses: niden/actions-memcached@v7
+      - name: Setup redis
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis version: '6.x'
+      - name: Install dependencies
+        run: npm i
+      - name: Check lint
+        run: npm run lint
+      - name: Run tests
+        run: npm run test
+
+      env:
+        REDIS_PORT: 6379
+        MEMCACHED_SERVER_URL: localhost:11211
+
+
