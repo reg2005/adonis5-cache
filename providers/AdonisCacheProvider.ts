@@ -1,4 +1,3 @@
-import { IocContract } from '@adonisjs/fold/build'
 import CacheManager from '../src/CacheManager'
 import RedisStorage from '../src/CacheStorages/RedisStorage'
 import InMemoryStorage from '../src/CacheStorages/InMemoryStorage'
@@ -8,13 +7,13 @@ import { CacheConfig, CacheManagerContract } from '@ioc:Adonis/Addons/Adonis5-Ca
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 import { AdonisMemcachedClientContract } from '@ioc:Adonis/Addons/Adonis5-MemcachedClient'
 import MemcachedStorage from '../src/CacheStorages/MemcachedStorage'
-import { Application } from '@adonisjs/application'
+import { ApplicationContract, IocContract } from '@ioc:Adonis/Core/Application'
 
 export default class AdonisCacheProvider {
 	public static needsApplication = true
 	private container: IocContract
 
-	constructor(protected application: Application) {
+	constructor(protected application: ApplicationContract) {
 		this.container = application.container
 	}
 

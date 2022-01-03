@@ -1,8 +1,7 @@
 import test from 'japa'
-import { AdonisApplication } from '../../test-helpers/TestAdonisApp'
 import AdonisCacheProvider from '../../providers/AdonisCacheProvider'
+import AdonisApplication from 'adonis-provider-tester'
 import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
-
 import { expect } from 'chai'
 import { flatten } from 'ramda'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'

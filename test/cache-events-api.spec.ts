@@ -1,5 +1,5 @@
 import test from 'japa'
-import { AdonisApplication } from '../test-helpers/TestAdonisApp'
+import AdonisApplication from 'adonis-provider-tester'
 import AdonisCacheProvider from '../providers/AdonisCacheProvider'
 import { CacheManagerContract, CacheConfig, EventPayload } from '@ioc:Adonis/Addons/Adonis5-Cache'
 import { last, takeLast } from 'ramda'
