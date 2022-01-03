@@ -1,9 +1,9 @@
 import test from 'japa'
 import { expect } from 'chai'
-import { AdonisApplication } from '../../test-helpers/TestAdonisApp'
+import AdonisApplication from 'adonis-provider-tester'
 import AdonisCacheProvider from '../../providers/AdonisCacheProvider'
 import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
-import sleep from '../../test-helpers/utils/sleep'
+import { sleep } from '../test-utils'
 
 const cacheConfig: CacheConfig = {
 	recordTTL: 1000,

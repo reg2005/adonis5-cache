@@ -1,5 +1,5 @@
 import test from 'japa'
-import { AdonisApplication } from '../../test-helpers/TestAdonisApp'
+import AdonisApplication from 'adonis-provider-tester'
 import AdonisCacheProvider from '../../providers/AdonisCacheProvider'
 import {
 	CacheManagerContract,

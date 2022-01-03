@@ -1,12 +1,12 @@
 import test from 'japa'
 import { expect } from 'chai'
-import { AdonisApplication } from '../../test-helpers/TestAdonisApp'
+import AdonisApplication from 'adonis-provider-tester'
 import AdonisCacheProvider from '../../providers/AdonisCacheProvider'
 import memcachedClientProvider from 'adonis5-memcached-client/build/providers/AdonisMemcachedClientProvider'
 import memcachedConfig from '../fixtures/memcached-test-config'
 import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
-import sleep from '../../test-helpers/utils/sleep'
 import { AdonisMemcachedClientContract } from '@ioc:Adonis/Addons/Adonis5-MemcachedClient'
+import { sleep } from '../test-utils/sleep'
 
 const cacheConfig: CacheConfig = {
 	recordTTL: 1000,

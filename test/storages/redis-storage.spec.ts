@@ -1,12 +1,12 @@
 import test from 'japa'
 import { expect } from 'chai'
-import { AdonisApplication } from '../../test-helpers/TestAdonisApp'
+import AdonisApplication from 'adonis-provider-tester'
 import AdonisCacheProvider from '../../providers/AdonisCacheProvider'
 import RedisProvider from '@adonisjs/redis/build/providers/RedisProvider'
 import redisConfig from '../fixtures/redis-test-config'
 import { CacheManagerContract, CacheConfig } from '@ioc:Adonis/Addons/Adonis5-Cache'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
-import sleep from '../../test-helpers/utils/sleep'
+import { sleep } from '../test-utils/sleep'
 
 const cacheConfig: CacheConfig = {
 	recordTTL: 1000,

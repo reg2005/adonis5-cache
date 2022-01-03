@@ -1,5 +1,4 @@
 import test from 'japa'
-import { AdonisApplication } from '../test-helpers/TestAdonisApp'
 import AdonisCacheProvider from '../providers/AdonisCacheProvider'
 import {
 	CacheManagerContract,
@@ -12,6 +11,7 @@ import { anything, instance, mock, objectContaining, verify, when } from 'ts-moc
 import { expect } from 'chai'
 import Config from '@ioc:Adonis/Core/Config'
 import TaggableCacheManager from '../src/TaggableCacheManager'
+import AdonisApplication from 'adonis-provider-tester'
 
 const cacheConfig: CacheConfig = {
 	recordTTL: 1000,

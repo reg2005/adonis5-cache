@@ -13,8 +13,8 @@ import TaggableCacheManager from './TaggableCacheManager'
 import { isFunction } from './TypeGuards'
 import ms from 'ms'
 
-export type CacheStorageCollection = { [key: string]: CacheStorageContract }
-export type CacheContextCollection = { [key: string]: CacheContextContract }
+export type CacheStorageCollection = Record<string, CacheStorageContract>
+export type CacheContextCollection = Record<string, CacheContextContract>
 
 export default class CacheManager implements CacheManagerContract {
 	public static readonly DEFAULT_RECORD_TTL = 6000
