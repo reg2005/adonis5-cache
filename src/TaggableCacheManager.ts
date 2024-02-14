@@ -56,7 +56,7 @@ export default class TaggableCacheManager implements TaggableCacheManagerContrac
 
 	protected async saveTaggedKeys(keys: string[], ttl: number = this.cacheManager.recordTTL) {
 		const tagPayload = JSON.stringify({
-			expirationTime: dayjs().add(ttl, 'ms').toISOString(),
+			expirationTime: dayjs().add(ttl, this.cacheManager.cacheConfig.ttlUnits).toISOString(),
 			keys,
 		})
 		await Promise.all(
